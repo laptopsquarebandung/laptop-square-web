@@ -26,7 +26,6 @@ export default function Home() {
     ? products 
     : products.filter(p => p.brand?.toLowerCase() === selectedBrand.toLowerCase());
 
-  // Produk pertama atau produk khusus untuk hero banner (opsional, ambil produk teratas)
   const heroProduct = products[0];
 
   return (
@@ -77,9 +76,9 @@ export default function Home() {
           {heroProduct && (
             <div style={{ flex: '0 1 300px', backgroundColor: 'white', color: '#0f172a', borderRadius: '12px', padding: '16px', boxShadow: '0 10px 25px rgba(0,0,0,0.3)' }}>
               <span style={{ fontSize: '10px', fontWeight: 'bold', color: '#0284c7', textTransform: 'uppercase' }}>Spotlight Produk</span>
-              <div style={{ height: '140px', backgroundColor: '#f1f5f9', borderRadius: '8px', margin: '10px 0', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ width: '100%', height: '140px', backgroundColor: '#ffffff', borderRadius: '8px', margin: '10px 0', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px', border: '1px solid #f1f5f9' }}>
                 {heroProduct.image_url ? (
-                  <img src={heroProduct.image_url} alt={heroProduct.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img src={heroProduct.image_url} alt={heroProduct.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 ) : (
                   <span style={{ color: '#94a3b8', fontSize: '12px' }}>{heroProduct.brand}</span>
                 )}
@@ -151,9 +150,9 @@ export default function Home() {
                   boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
                 }}
               >
-                <div style={{ height: '150px', backgroundColor: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                <div style={{ width: '100%', height: '150px', backgroundColor: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', padding: '10px', borderBottom: '1px solid #f1f5f9' }}>
                   {product.image_url ? (
-                    <img src={product.image_url} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={product.image_url} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                   ) : (
                     <span style={{ color: '#94a3b8', fontSize: '13px', fontWeight: '500' }}>{product.brand || 'Laptop'}</span>
                   )}
