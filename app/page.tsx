@@ -30,14 +30,40 @@ export default function Home() {
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc', fontFamily: 'sans-serif', paddingBottom: '60px' }}>
-      {/* Top Header */}
+      {/* Banner Berjalan (Marquee Info Promo) */}
+      <div style={{ backgroundColor: '#0284c7', color: 'white', fontSize: '13px', fontWeight: '500', overflow: 'hidden', whiteSpace: 'nowrap', padding: '8px 0' }}>
+        <div style={{ display: 'inline-block', paddingLeft: '100%', animation: 'marquee 25s linear infinite' }}>
+          🔥 Selamat datang di Laptop Square BEC Bandung! | Cicilan 0% / Kredit Mudah | Free Install & Bonus Tas | Stok Ready & Bergaransi Resmi 🚀
+        </div>
+      </div>
+      <style jsx global>{`
+        @keyframes marquee {
+          0% { transform: translate(0, 0); }
+          100% { transform: translate(-100%, 0); }
+        }
+      `}</style>
+
+      {/* Top Header dengan Logo */}
       <header style={{ backgroundColor: '#0f172a', color: 'white', padding: '16px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: '1200px', margin: '0 auto' }}>
-        <div>
-          <h1 style={{ margin: 0, fontSize: '22px', fontWeight: 'bold', color: '#38bdf8' }}>LAPTOP SQUARE</h1>
-          <p style={{ margin: '2px 0 0 0', color: '#94a3b8', fontSize: '12px' }}>Istana BEC Lantai 1 Blok H16, Bandung</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          {/* Logo Laptop Square (Ganti URL src dengan link logo online atau file /logo.png di folder public) */}
+          <div style={{ width: '42px', height: '42px', borderRadius: '8px', backgroundColor: '#1e293b', border: '1px solid #334155', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+            <img 
+              src="https://mugcnbapivtaplnjzuvq.supabase.co/storage/v1/object/public/products/ok-dua-26.png" 
+              alt="Logo" 
+              style={{ width: '80%', height: '80%', objectFit: 'contain' }} 
+              onError={(e: any) => { e.currentTarget.style.display = 'none'; }}
+            />
+            {/* Fallback ikon huruf LS jika logo belum ada */}
+            <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#38bdf8', position: 'absolute' }}>LS</span>
+          </div>
+          <div>
+            <h1 style={{ margin: 0, fontSize: '22px', fontWeight: 'bold', color: '#38bdf8', letterSpacing: '0.5px' }}>LAPTOP SQUARE</h1>
+            <p style={{ margin: '2px 0 0 0', color: '#94a3b8', fontSize: '12px' }}>Istana BEC Lantai 1 Blok H16, Bandung</p>
+          </div>
         </div>
         <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-          <span style={{ fontSize: '13px', color: '#cbd5e1' }}>📞 082110898948</span>
+          <span style={{ fontSize: '13px', color: '#cbd5e1', display: 'none' }} className="md:inline">📞 082110898948</span>
           <a 
             href="https://wa.me/6282110898948?text=Halo%20Laptop%20Square,%20saya%20mau%20tanya%20stok" 
             target="_blank"
@@ -76,7 +102,7 @@ export default function Home() {
           {heroProduct && (
             <div style={{ flex: '0 1 300px', backgroundColor: 'white', color: '#0f172a', borderRadius: '12px', padding: '16px', boxShadow: '0 10px 25px rgba(0,0,0,0.3)' }}>
               <span style={{ fontSize: '10px', fontWeight: 'bold', color: '#0284c7', textTransform: 'uppercase' }}>Spotlight Produk</span>
-              <div style={{ width: '100%', height: '140px', backgroundColor: '#ffffff', borderRadius: '8px', margin: '10px 0', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px', border: '1px solid #f1f5f9' }}>
+              <div style={{ width: '100%', height: '140px', backgroundColor: '#ffffff', borderRadius: '8px', margin: '10px 0', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px', border: '1px solid #f1f5f9', position: 'relative' }}>
                 {heroProduct.image_url ? (
                   <img src={heroProduct.image_url} alt={heroProduct.name} style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto', objectFit: 'contain' }} />
                 ) : (
@@ -150,7 +176,7 @@ export default function Home() {
                   boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
                 }}
               >
-                <div style={{ width: '100%', height: '150px', backgroundColor: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', padding: '10px', borderBottom: '1px solid #f1f5f9' }}>
+                <div style={{ width: '100%', height: '150px', backgroundColor: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', padding: '10px', borderBottom: '1px solid #f1f5f9', position: 'relative' }}>
                   {product.image_url ? (
                     <img src={product.image_url} alt={product.name} style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto', objectFit: 'contain' }} />
                   ) : (
