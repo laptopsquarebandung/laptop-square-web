@@ -45,46 +45,51 @@ export default function Home() {
       `}</style>
 
       {/* Top Header dengan Logo & Maps */}
-      <header style={{ backgroundColor: '#0f172a', color: 'white', padding: '16px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: '1200px', margin: '0 auto', flexWrap: 'wrap', gap: '15px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{ width: '42px', height: '42px', borderRadius: '8px', backgroundColor: '#1e293b', border: '1px solid #334155', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', position: 'relative' }}>
-            <img 
-              src="https://mugcnbapivtaplnjzuvq.supabase.co/storage/v1/object/public/products/ok-dua-26.png" 
-              alt="Logo" 
-              style={{ width: '80%', height: '80%', objectFit: 'contain' }} 
-              onError={(e: any) => { e.currentTarget.style.display = 'none'; }}
-            />
-            <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#38bdf8', position: 'absolute' }}>LS</span>
+      <header style={{ backgroundColor: '#0f172a', color: 'white', padding: '16px 20px', maxWidth: '1200px', margin: '0 auto' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
+          {/* Logo & Nama Toko */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <div style={{ width: '42px', height: '42px', borderRadius: '8px', backgroundColor: '#1e293b', border: '1px solid #334155', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', position: 'relative', flexShrink: 0 }}>
+              <img 
+                src="https://mugcnbapivtaplnjzuvq.supabase.co/storage/v1/object/public/products/ok-dua-26.png" 
+                alt="Logo" 
+                style={{ width: '80%', height: '80%', objectFit: 'contain' }} 
+                onError={(e: any) => { e.currentTarget.style.display = 'none'; }}
+              />
+              <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#38bdf8', position: 'absolute' }}>LS</span>
+            </div>
+            <div>
+              <h1 style={{ margin: 0, fontSize: '20px', fontWeight: 'bold', color: '#38bdf8', letterSpacing: '0.5px' }}>LAPTOP SQUARE</h1>
+              <a 
+                href={mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ margin: '2px 0 0 0', color: '#94a3b8', fontSize: '11px', textDecoration: 'none', display: 'block' }}
+              >
+                📍 Istana BEC Lantai 1 Blok H16, Bandung <span style={{ color: '#38bdf8', textDecoration: 'underline' }}>(Klik Peta)</span>
+              </a>
+            </div>
           </div>
-          <div>
-            <h1 style={{ margin: 0, fontSize: '22px', fontWeight: 'bold', color: '#38bdf8', letterSpacing: '0.5px' }}>LAPTOP SQUARE</h1>
+
+          {/* Tombol Aksi Kanan (Maps & WA) */}
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
             <a 
               href={mapsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              style={{ margin: '2px 0 0 0', color: '#94a3b8', fontSize: '12px', textDecoration: 'none', display: 'inline-block' }}
+              style={{ backgroundColor: '#1e293b', color: '#38bdf8', border: '1px solid #334155', padding: '9px 14px', borderRadius: '8px', textDecoration: 'none', fontSize: '12px', fontWeight: 'bold', whiteSpace: 'nowrap' }}
             >
-              📍 Istana BEC Lantai 1 Blok H16, Bandung <span style={{ color: '#38bdf8', textDecoration: 'underline' }}>(Buka Peta)</span>
+              🗺️ Google Maps
+            </a>
+            <a 
+              href="https://wa.me/6282110898948?text=Halo%20Laptop%20Square,%20saya%20mau%20tanya%20stok" 
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ backgroundColor: '#25d366', color: 'white', padding: '9px 16px', borderRadius: '8px', textDecoration: 'none', fontSize: '12px', fontWeight: 'bold', whiteSpace: 'nowrap' }}
+            >
+              💬 WhatsApp
             </a>
           </div>
-        </div>
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-          <a 
-            href={mapsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ backgroundColor: '#1e293b', color: '#38bdf8', border: '1px solid #334155', padding: '8px 14px', borderRadius: '6px', textDecoration: 'none', fontSize: '12px', fontWeight: 'bold' }}
-          >
-            🗺️ Google Maps
-          </a>
-          <a 
-            href="https://wa.me/6282110898948?text=Halo%20Laptop%20Square,%20saya%20mau%20tanya%20stok" 
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ backgroundColor: '#25d366', color: 'white', padding: '8px 16px', borderRadius: '6px', textDecoration: 'none', fontSize: '13px', fontWeight: 'bold' }}
-          >
-            WhatsApp
-          </a>
         </div>
       </header>
 
