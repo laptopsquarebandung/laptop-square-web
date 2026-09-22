@@ -27,6 +27,7 @@ export default function Home() {
     : products.filter(p => p.brand?.toLowerCase() === selectedBrand.toLowerCase());
 
   const heroProduct = products[0];
+  const mapsUrl = "https://www.google.com/maps/place/Laptop+Square+BEC/@-6.9078216,107.6087898,17z/data=!3m1!4b1!4m6!3m5!1s0x2e68e638090867fd:0x5b1dfccd504a25c5!8m2!3d-6.9078216!4d107.6087898!16s%2Fg%2F1pzwhkpd7?entry=ttu";
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc', fontFamily: 'sans-serif', paddingBottom: '60px' }}>
@@ -43,30 +44,43 @@ export default function Home() {
         }
       `}</style>
 
-      {/* Top Header dengan Logo */}
-      <header style={{ backgroundColor: '#0f172a', color: 'white', padding: '16px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: '1200px', margin: '0 auto' }}>
+      {/* Top Header dengan Logo & Maps */}
+      <header style={{ backgroundColor: '#0f172a', color: 'white', padding: '16px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: '1200px', margin: '0 auto', flexWrap: 'wrap', gap: '15px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          {/* Logo Laptop Square (Ganti URL src dengan link logo online atau file /logo.png di folder public) */}
-          <div style={{ width: '42px', height: '42px', borderRadius: '8px', backgroundColor: '#1e293b', border: '1px solid #334155', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+          <div style={{ width: '42px', height: '42px', borderRadius: '8px', backgroundColor: '#1e293b', border: '1px solid #334155', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', position: 'relative' }}>
             <img 
               src="https://mugcnbapivtaplnjzuvq.supabase.co/storage/v1/object/public/products/ok-dua-26.png" 
               alt="Logo" 
               style={{ width: '80%', height: '80%', objectFit: 'contain' }} 
               onError={(e: any) => { e.currentTarget.style.display = 'none'; }}
             />
-            {/* Fallback ikon huruf LS jika logo belum ada */}
             <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#38bdf8', position: 'absolute' }}>LS</span>
           </div>
           <div>
             <h1 style={{ margin: 0, fontSize: '22px', fontWeight: 'bold', color: '#38bdf8', letterSpacing: '0.5px' }}>LAPTOP SQUARE</h1>
-            <p style={{ margin: '2px 0 0 0', color: '#94a3b8', fontSize: '12px' }}>Istana BEC Lantai 1 Blok H16, Bandung</p>
+            <a 
+              href={mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ margin: '2px 0 0 0', color: '#94a3b8', fontSize: '12px', textDecoration: 'none', display: 'inline-block' }}
+            >
+              📍 Istana BEC Lantai 1 Blok H16, Bandung <span style={{ color: '#38bdf8', textDecoration: 'underline' }}>(Buka Peta)</span>
+            </a>
           </div>
         </div>
-        <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-          <span style={{ fontSize: '13px', color: '#cbd5e1', display: 'none' }} className="md:inline">📞 082110898948</span>
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <a 
+            href={mapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ backgroundColor: '#1e293b', color: '#38bdf8', border: '1px solid #334155', padding: '8px 14px', borderRadius: '6px', textDecoration: 'none', fontSize: '12px', fontWeight: 'bold' }}
+          >
+            🗺️ Google Maps
+          </a>
           <a 
             href="https://wa.me/6282110898948?text=Halo%20Laptop%20Square,%20saya%20mau%20tanya%20stok" 
             target="_blank"
+            rel="noopener noreferrer"
             style={{ backgroundColor: '#25d366', color: 'white', padding: '8px 16px', borderRadius: '6px', textDecoration: 'none', fontSize: '13px', fontWeight: 'bold' }}
           >
             WhatsApp
@@ -87,13 +101,22 @@ export default function Home() {
             <p style={{ color: '#94a3b8', fontSize: '15px', margin: '0 0 20px 0', lineHeight: '1.5' }}>
               Garansi resmi, pelayanan konsultasi ramah, dan siap ambil di BEC Lantai 1 Blok H16. Konsultasikan kebutuhan spesifikasi Anda langsung via WhatsApp.
             </p>
-            <div style={{ display: 'flex', gap: '12px' }}>
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
               <a 
                 href="https://wa.me/6282110898948?text=Halo%20Laptop%20Square,%20mau%20konsultasi%20pilih%20laptop" 
                 target="_blank"
+                rel="noopener noreferrer"
                 style={{ backgroundColor: '#38bdf8', color: '#0f172a', padding: '12px 24px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold', fontSize: '14px' }}
               >
                 Konsultasi Sekarang
+              </a>
+              <a 
+                href={mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ backgroundColor: 'transparent', color: 'white', border: '1px solid #475569', padding: '12px 20px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold', fontSize: '14px' }}
+              >
+                Kunjungi Toko (BEC)
               </a>
             </div>
           </div>
@@ -116,6 +139,7 @@ export default function Home() {
               <a 
                 href={`https://wa.me/6282110898948?text=Halo%20Laptop%20Square,%20saya%20tertarik%20dengan%20spotlight%20${encodeURIComponent(heroProduct.name)}`}
                 target="_blank"
+                rel="noopener noreferrer"
                 style={{ display: 'block', textAlign: 'center', backgroundColor: '#0f172a', color: 'white', padding: '8px', borderRadius: '6px', textDecoration: 'none', fontSize: '12px', fontWeight: 'bold' }}
               >
                 Tanya Stok WA
@@ -201,6 +225,7 @@ export default function Home() {
                     <a 
                       href={`https://wa.me/6282110898948?text=Halo%20Laptop%20Square,%20saya%20tertarik%20dengan%20${encodeURIComponent(product.name)}.%20Apakah%20ready?`}
                       target="_blank"
+                      rel="noopener noreferrer"
                       style={{
                         display: 'block',
                         textAlign: 'center',
