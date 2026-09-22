@@ -44,19 +44,17 @@ export default function Home() {
         }
       `}</style>
 
-      {/* Top Header dengan Logo & Maps */}
+      {/* Top Header dengan Logo Lebih Besar & Maps */}
       <header style={{ backgroundColor: '#0f172a', color: 'white', padding: '16px 20px', maxWidth: '1200px', margin: '0 auto' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
           {/* Logo & Nama Toko */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-            <div style={{ width: '42px', height: '42px', borderRadius: '8px', backgroundColor: '#1e293b', border: '1px solid #334155', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', position: 'relative', flexShrink: 0 }}>
+            <div style={{ width: '60px', height: '60px', borderRadius: '8px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <img 
                 src="https://mugcnbapivtaplnjzuvq.supabase.co/storage/v1/object/public/products/logo%20ls.jpg" 
-                alt="Logo" 
-                style={{ width: '80%', height: '80%', objectFit: 'contain' }} 
-                onError={(e: any) => { e.currentTarget.style.display = 'none'; }}
+                alt="Logo Laptop Square" 
+                style={{ width: '100%', height: '100%', objectFit: 'contain' }} 
               />
-              <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#38bdf8', position: 'absolute' }}>LS</span>
             </div>
             <div>
               <h1 style={{ margin: 0, fontSize: '20px', fontWeight: 'bold', color: '#38bdf8', letterSpacing: '0.5px' }}>LAPTOP SQUARE</h1>
