@@ -241,7 +241,7 @@ export default function Home() {
                   )}
                 </div>
 
-                <div style={{ padding: '14px', display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'space-between' }}>
+                <div style={{ padding: '14px', display: 'flex', flexDirection: 'column', flex 1, justifyContent: 'space-between' }}>
                   <div>
                     <span style={{ fontSize: '10px', fontWeight: 'bold', color: '#0284c7', textTransform: 'uppercase' }}>
                       {product.brand || 'General'}
