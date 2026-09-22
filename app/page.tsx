@@ -78,7 +78,7 @@ export default function Home() {
               <span style={{ fontSize: '10px', fontWeight: 'bold', color: '#0284c7', textTransform: 'uppercase' }}>Spotlight Produk</span>
               <div style={{ width: '100%', height: '140px', backgroundColor: '#ffffff', borderRadius: '8px', margin: '10px 0', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px', border: '1px solid #f1f5f9' }}>
                 {heroProduct.image_url ? (
-                  <img src={heroProduct.image_url} alt={heroProduct.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                  <img src={heroProduct.image_url} alt={heroProduct.name} style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto', objectFit: 'contain' }} />
                 ) : (
                   <span style={{ color: '#94a3b8', fontSize: '12px' }}>{heroProduct.brand}</span>
                 )}
@@ -152,7 +152,7 @@ export default function Home() {
               >
                 <div style={{ width: '100%', height: '150px', backgroundColor: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', padding: '10px', borderBottom: '1px solid #f1f5f9' }}>
                   {product.image_url ? (
-                    <img src={product.image_url} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                    <img src={product.image_url} alt={product.name} style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto', objectFit: 'contain' }} />
                   ) : (
                     <span style={{ color: '#94a3b8', fontSize: '13px', fontWeight: '500' }}>{product.brand || 'Laptop'}</span>
                   )}
