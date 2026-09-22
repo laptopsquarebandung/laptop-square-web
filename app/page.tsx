@@ -51,7 +51,7 @@ export default function Home() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
             <div style={{ width: '42px', height: '42px', borderRadius: '8px', backgroundColor: '#1e293b', border: '1px solid #334155', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', position: 'relative', flexShrink: 0 }}>
               <img 
-                src="https://mugcnbapivtaplnjzuvq.supabase.co/storage/v1/object/public/products/ok-dua-26.png" 
+                src="https://mugcnbapivtaplnjzuvq.supabase.co/storage/v1/object/public/products/logo%20ls.jpg" 
                 alt="Logo" 
                 style={{ width: '80%', height: '80%', objectFit: 'contain' }} 
                 onError={(e: any) => { e.currentTarget.style.display = 'none'; }}
