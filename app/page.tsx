@@ -13,14 +13,12 @@ export default function Home() {
 
   const mapsUrl = "https://www.google.com/maps/place/Laptop+Square+BEC/@-6.9078216,107.6087898,17z/data=!3m1!4b1!4m6!3m5!1s0x2e68e638090867fd:0x5b1dfccd504a25c5!8m2!3d-6.9078216!4d107.6087898!16s%2Fg%2F1pzwhkpd7?entry=ttu";
 
-  // Daftar Brand Lengkap untuk Filter
   const brands = ['ALL', 'Lenovo', 'HP', 'Acer', 'ASUS', 'MSI', 'Apple', 'Axioo', 'Advan', 'Zyrex', 'Colorful'];
 
-  // Banner Promo (Bisa Pakai URL Gambar / Video dari Supabase Storage)
   const banners = [
     {
-      type: "image", // "image" atau "video"
-      mediaUrl: "", // Tempel URL dari Supabase Storage di sini (misal: https://.../banner1.jpg)
+      type: "image",
+      mediaUrl: "", 
       title: "PROMO SPESIAL LAPTOP SQUARE BEC",
       subtitle: "Bebas Pilih Bonus Aksesoris & Garansi Resmi!",
       tag: "PROMO BEC",
@@ -38,7 +36,6 @@ export default function Home() {
     }
   ];
 
-  // Highlight 3 Ulasan Google Review
   const googleReviews = [
     {
       name: "Aulia Azizah",
@@ -60,7 +57,6 @@ export default function Home() {
     }
   ];
 
-  // Auto-slide banner promo
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % banners.length);
@@ -68,7 +64,6 @@ export default function Home() {
     return () => clearInterval(timer);
   }, [banners.length]);
 
-  // Ambil Data Produk dari Supabase
   useEffect(() => {
     async function getProducts() {
       const { data, error } = await supabase.from('products').select('*');
@@ -76,7 +71,6 @@ export default function Home() {
         console.error("Gagal mengambil data:", error);
       } else if (data && data.length > 0) {
         setAllProducts(data);
-        // Acak (random) dan ambil 8 produk untuk tampilan default 'ALL'
         const shuffled = [...data].sort(() => 0.5 - Math.random());
         setDisplayedProducts(shuffled.slice(0, 8));
       }
@@ -85,7 +79,6 @@ export default function Home() {
     getProducts();
   }, []);
 
-  // Filter Produk berdasarkan Brand
   const handleSelectBrand = (brand: string) => {
     setSelectedBrand(brand);
     if (brand === 'ALL') {
@@ -111,6 +104,15 @@ export default function Home() {
         ))}
       </ul>
     );
+  };
+
+  // Helper URL Gambar (Mendukung image_url dari DB atau fallback dari slug)
+  const getProductImage = (product: any) => {
+    if (product.image_url) return product.image_url;
+    if (product.slug) {
+      return `https://mugcnbapivtaplnjzuvq.supabase.co/storage/v1/object/public/products/${product.slug}.jpg`;
+    }
+    return null;
   };
 
   return (
@@ -159,7 +161,7 @@ export default function Home() {
 
       <main style={{ maxWidth: '1200px', margin: '20px auto 0 auto', padding: '0 20px' }}>
         
-        {/* 2. ROLLING BANNER (FOTO / VIDEO) */}
+        {/* 2. ROLLING BANNER */}
         <section style={{ position: 'relative', borderRadius: '16px', overflow: 'hidden', marginBottom: '30px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)' }}>
           {banners[currentSlide].mediaUrl ? (
             banners[currentSlide].type === "video" ? (
@@ -233,7 +235,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 4. FILTER MEREK LENGKAP & KATALOG PRODUK */}
+        {/* 4. KATALOG PRODUK */}
         <section>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
             <div>
@@ -243,7 +245,6 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Filter Merek Lengkap */}
             <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '6px', maxWidth: '100%' }}>
               {brands.map((brand) => (
                 <button
@@ -275,44 +276,47 @@ export default function Home() {
             </div>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))', gap: '20px' }}>
-              {displayedProducts.map((product) => (
-                <div 
-                  key={product.id} 
-                  onClick={() => setSelectedProduct(product)}
-                  style={{ backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '12px', overflow: 'hidden', display: 'flex', flexDirection: 'column', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}
-                >
-                  <div style={{ height: '140px', backgroundColor: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10px', borderBottom: '1px solid #f1f5f9' }}>
-                    {product.image_url ? (
-                      <img src={product.image_url} alt={product.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
-                    ) : (
-                      <span style={{ color: '#94a3b8', fontSize: '12px', fontWeight: 'bold' }}>{product.brand}</span>
-                    )}
-                  </div>
-
-                  <div style={{ padding: '14px', display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'space-between' }}>
-                    <div>
-                      <span style={{ fontSize: '10px', fontWeight: 'bold', color: '#0284c7', textTransform: 'uppercase' }}>{product.brand}</span>
-                      <h4 style={{ fontSize: '13px', fontWeight: 'bold', color: '#0f172a', margin: '4px 0 8px 0', lineHeight: '1.3' }}>{product.name}</h4>
+              {displayedProducts.map((product) => {
+                const img = getProductImage(product);
+                return (
+                  <div 
+                    key={product.id} 
+                    onClick={() => setSelectedProduct(product)}
+                    style={{ backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '12px', overflow: 'hidden', display: 'flex', flexDirection: 'column', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}
+                  >
+                    <div style={{ height: '140px', backgroundColor: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10px', borderBottom: '1px solid #f1f5f9' }}>
+                      {img ? (
+                        <img src={img} alt={product.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+                      ) : (
+                        <span style={{ color: '#94a3b8', fontSize: '12px', fontWeight: 'bold' }}>{product.brand}</span>
+                      )}
                     </div>
 
-                    <div>
-                      <p style={{ fontSize: '15px', fontWeight: 'bold', color: '#0f172a', margin: '0 0 10px 0' }}>
-                        Rp {Number(product.price).toLocaleString('id-ID')}
-                      </p>
-                      <button style={{ width: '100%', backgroundColor: '#0f172a', color: 'white', padding: '8px', borderRadius: '6px', border: 'none', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' }}>
-                        Lihat Detail & Promo
-                      </button>
+                    <div style={{ padding: '14px', display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'space-between' }}>
+                      <div>
+                        <span style={{ fontSize: '10px', fontWeight: 'bold', color: '#0284c7', textTransform: 'uppercase' }}>{product.brand}</span>
+                        <h4 style={{ fontSize: '13px', fontWeight: 'bold', color: '#0f172a', margin: '4px 0 8px 0', lineHeight: '1.3' }}>{product.name}</h4>
+                      </div>
+
+                      <div>
+                        <p style={{ fontSize: '15px', fontWeight: 'bold', color: '#0f172a', margin: '0 0 10px 0' }}>
+                          Rp {Number(product.price).toLocaleString('id-ID')}
+                        </p>
+                        <button style={{ width: '100%', backgroundColor: '#0f172a', color: 'white', padding: '8px', borderRadius: '6px', border: 'none', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' }}>
+                          Lihat Detail & Promo
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </section>
 
       </main>
 
-      {/* MODAL SPESIFIKASI */}
+      {/* MODAL SPESIFIKASI BERDAMPINGAN DENGAN GAMBAR PRODUK */}
       {selectedProduct && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(15, 23, 42, 0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
           <div style={{ backgroundColor: 'white', borderRadius: '12px', maxWidth: '480px', width: '100%', padding: '24px', boxShadow: '0 20px 25px rgba(0, 0, 0, 0.3)', position: 'relative', maxHeight: '90vh', overflowY: 'auto' }}>
@@ -320,6 +324,15 @@ export default function Home() {
             <button onClick={() => setSelectedProduct(null)} style={{ position: 'absolute', top: '16px', right: '16px', backgroundColor: '#f1f5f9', border: 'none', borderRadius: '50%', width: '30px', height: '30px', cursor: 'pointer', fontWeight: 'bold', color: '#64748b' }}>
               ✕
             </button>
+
+            {/* KOTAK GAMBAR PRODUK DI DALAM POP-UP MODAL */}
+            <div style={{ width: '100%', height: '180px', backgroundColor: '#ffffff', borderRadius: '8px', border: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10px', marginBottom: '16px' }}>
+              {getProductImage(selectedProduct) ? (
+                <img src={getProductImage(selectedProduct)!} alt={selectedProduct.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+              ) : (
+                <span style={{ color: '#94a3b8', fontSize: '14px', fontWeight: 'bold' }}>{selectedProduct.brand}</span>
+              )}
+            </div>
 
             <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#0284c7', textTransform: 'uppercase' }}>{selectedProduct.brand}</span>
             <h2 style={{ fontSize: '17px', fontWeight: 'bold', color: '#0f172a', margin: '4px 0 8px 0' }}>{selectedProduct.name}</h2>
