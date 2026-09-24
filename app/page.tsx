@@ -106,7 +106,6 @@ export default function Home() {
     );
   };
 
-  // Helper URL Gambar (Mendukung image_url dari DB atau fallback dari slug)
   const getProductImage = (product: any) => {
     if (product.image_url) return product.image_url;
     if (product.slug) {
@@ -316,31 +315,31 @@ export default function Home() {
 
       </main>
 
-      {/* MODAL SPESIFIKASI BERDAMPINGAN DENGAN GAMBAR PRODUK */}
+      {/* MODAL SPESIFIKASI DENGAN GAMBAR LEBIH BESAR & JELAS */}
       {selectedProduct && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(15, 23, 42, 0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-          <div style={{ backgroundColor: 'white', borderRadius: '12px', maxWidth: '480px', width: '100%', padding: '24px', boxShadow: '0 20px 25px rgba(0, 0, 0, 0.3)', position: 'relative', maxHeight: '90vh', overflowY: 'auto' }}>
+          <div style={{ backgroundColor: 'white', borderRadius: '16px', maxWidth: '520px', width: '100%', padding: '24px', boxShadow: '0 20px 25px rgba(0, 0, 0, 0.3)', position: 'relative', maxHeight: '90vh', overflowY: 'auto' }}>
             
-            <button onClick={() => setSelectedProduct(null)} style={{ position: 'absolute', top: '16px', right: '16px', backgroundColor: '#f1f5f9', border: 'none', borderRadius: '50%', width: '30px', height: '30px', cursor: 'pointer', fontWeight: 'bold', color: '#64748b' }}>
+            <button onClick={() => setSelectedProduct(null)} style={{ position: 'absolute', top: '16px', right: '16px', backgroundColor: '#f1f5f9', border: 'none', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer', fontWeight: 'bold', color: '#64748b', fontSize: '14px' }}>
               ✕
             </button>
 
-            {/* KOTAK GAMBAR PRODUK DI DALAM POP-UP MODAL */}
-            <div style={{ width: '100%', height: '180px', backgroundColor: '#ffffff', borderRadius: '8px', border: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10px', marginBottom: '16px' }}>
+            {/* TAMPILAN GAMBAR PRODUK LEBIH BESAR & JERNIH (240px) */}
+            <div style={{ width: '100%', height: '240px', backgroundColor: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', marginBottom: '20px', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)' }}>
               {getProductImage(selectedProduct) ? (
                 <img src={getProductImage(selectedProduct)!} alt={selectedProduct.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
               ) : (
-                <span style={{ color: '#94a3b8', fontSize: '14px', fontWeight: 'bold' }}>{selectedProduct.brand}</span>
+                <span style={{ color: '#94a3b8', fontSize: '16px', fontWeight: 'bold' }}>{selectedProduct.brand}</span>
               )}
             </div>
 
             <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#0284c7', textTransform: 'uppercase' }}>{selectedProduct.brand}</span>
-            <h2 style={{ fontSize: '17px', fontWeight: 'bold', color: '#0f172a', margin: '4px 0 8px 0' }}>{selectedProduct.name}</h2>
-            <p style={{ fontSize: '18px', fontWeight: 'bold', color: '#2563eb', margin: '0 0 16px 0' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: 'bold', color: '#0f172a', margin: '4px 0 8px 0' }}>{selectedProduct.name}</h2>
+            <p style={{ fontSize: '20px', fontWeight: 'bold', color: '#2563eb', margin: '0 0 16px 0' }}>
               Rp {Number(selectedProduct.price).toLocaleString('id-ID')}
             </p>
 
-            <div style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '14px', marginBottom: '20px' }}>
+            <div style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '16px', marginBottom: '20px' }}>
               <h4 style={{ margin: '0 0 10px 0', fontSize: '13px', color: '#0f172a', fontWeight: 'bold' }}>📋 Spesifikasi Utama:</h4>
               {renderSpecs(selectedProduct.specs)}
             </div>
