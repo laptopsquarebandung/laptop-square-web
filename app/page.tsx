@@ -4,24 +4,33 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 
 export default function Home() {
-  const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
+  const [allProducts, setAllProducts] = useState<any[]>([]);
+  const [displayedProducts, setDisplayedProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedBrand, setSelectedBrand] = useState('ALL');
   const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const mapsUrl = "https://www.google.com/maps/place/Laptop+Square+BEC/@-6.9078216,107.6087898,17z/data=!3m1!4b1!4m6!3m5!1s0x2e68e638090867fd:0x5b1dfccd504a25c5!8m2!3d-6.9078216!4d107.6087898!16s%2Fg%2F1pzwhkpd7?entry=ttu";
 
-  // Banner Promo Rolling
+  // Daftar Brand Lengkap untuk Filter
+  const brands = ['ALL', 'Lenovo', 'HP', 'Acer', 'ASUS', 'MSI', 'Apple', 'Axioo', 'Advan', 'Zyrex', 'Colorful'];
+
+  // Banner Promo (Bisa Pakai URL Gambar / Video dari Supabase Storage)
   const banners = [
     {
-      title: "BELI LAPTOP DI LAPTOP SQUARE BEC",
+      type: "image", // "image" atau "video"
+      mediaUrl: "", // Tempel URL dari Supabase Storage di sini (misal: https://.../banner1.jpg)
+      title: "PROMO SPESIAL LAPTOP SQUARE BEC",
       subtitle: "Bebas Pilih Bonus Aksesoris & Garansi Resmi!",
-      tag: "PROMO SPESIAL BEC",
+      tag: "PROMO BEC",
       bg: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
       accent: "#38bdf8"
     },
     {
-      title: "PUSAT REPARASI & UPGRADE LAPTOP BANDUNG",
+      type: "image",
+      mediaUrl: "", 
+      title: "PUSAT SERVICE & UPGRADE LAPTOP BANDUNG",
       subtitle: "Pengerjaan Cepat, Transparan & Bergaransi",
       tag: "SERVICE CENTER BEC",
       bg: "linear-gradient(135deg, #0284c7 0%, #0f172a 100%)",
@@ -29,7 +38,7 @@ export default function Home() {
     }
   ];
 
-  // Dummy / Static Ulasan Google Review
+  // Highlight 3 Ulasan Google Review
   const googleReviews = [
     {
       name: "Aulia Azizah",
@@ -48,16 +57,10 @@ export default function Home() {
       time: "1 bulan lalu",
       rating: 5,
       text: "Pusat laptop terlengkap di BEC Lantai 1. Pelayanan mantap, harga bersaing dan garansi resmi."
-    },
-    {
-      name: "Rizky Pratama",
-      time: "2 bulan lalu",
-      rating: 5,
-      text: "Toko terpercaya di BEC. Klaim garansi dan service laptop cepat banget. Sangat rekomended!"
     }
   ];
 
-  // Auto-slide banner promo setiap 5 detik
+  // Auto-slide banner promo
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % banners.length);
@@ -65,21 +68,34 @@ export default function Home() {
     return () => clearInterval(timer);
   }, [banners.length]);
 
-  // Ambil data produk & acak (random) beberapa produk andalan
+  // Ambil Data Produk dari Supabase
   useEffect(() => {
     async function getProducts() {
       const { data, error } = await supabase.from('products').select('*');
       if (error) {
         console.error("Gagal mengambil data:", error);
       } else if (data && data.length > 0) {
-        // Shuffle / Acak produk dan ambil 6-8 produk andalan saja
+        setAllProducts(data);
+        // Acak (random) dan ambil 8 produk untuk tampilan default 'ALL'
         const shuffled = [...data].sort(() => 0.5 - Math.random());
-        setFeaturedProducts(shuffled.slice(0, 8));
+        setDisplayedProducts(shuffled.slice(0, 8));
       }
       setLoading(false);
     }
     getProducts();
   }, []);
+
+  // Filter Produk berdasarkan Brand
+  const handleSelectBrand = (brand: string) => {
+    setSelectedBrand(brand);
+    if (brand === 'ALL') {
+      const shuffled = [...allProducts].sort(() => 0.5 - Math.random());
+      setDisplayedProducts(shuffled.slice(0, 8));
+    } else {
+      const filtered = allProducts.filter(p => p.brand?.toLowerCase() === brand.toLowerCase());
+      setDisplayedProducts(filtered);
+    }
+  };
 
   const renderSpecs = (specsData: any) => {
     if (!specsData) return "Hubungi tim Laptop Square untuk detail ketersediaan varian spesifikasi lengkap.";
@@ -100,7 +116,7 @@ export default function Home() {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc', fontFamily: 'sans-serif', paddingBottom: '60px' }}>
       
-      {/* 1. TOP HEADER & MARQUEE */}
+      {/* 1. TOP MARQUEE BANNER */}
       <div style={{ backgroundColor: '#0284c7', color: 'white', fontSize: '12px', fontWeight: '500', overflow: 'hidden', whiteSpace: 'nowrap', padding: '6px 0' }}>
         <div style={{ display: 'inline-block', paddingLeft: '100%', animation: 'marquee 25s linear infinite' }}>
           🔥 Laptop Square Istana BEC Lantai 1 Blok H16 Bandung | Promo Cicilan 0% | Free Bonus Tas & Install Aplikasi 🚀
@@ -113,6 +129,7 @@ export default function Home() {
         }
       `}</style>
 
+      {/* HEADER */}
       <header style={{ backgroundColor: '#0f172a', color: 'white', padding: '16px 20px', maxWidth: '1200px', margin: '0 auto' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
@@ -142,20 +159,27 @@ export default function Home() {
 
       <main style={{ maxWidth: '1200px', margin: '20px auto 0 auto', padding: '0 20px' }}>
         
-        {/* 2. ROLLING PROMO BANNER (Atas) */}
+        {/* 2. ROLLING BANNER (FOTO / VIDEO) */}
         <section style={{ position: 'relative', borderRadius: '16px', overflow: 'hidden', marginBottom: '30px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)' }}>
-          <div style={{ background: banners[currentSlide].bg, color: 'white', padding: '40px 30px', minHeight: '200px', display: 'flex', flexDirection: 'column', justifyContent: 'center', transition: 'all 0.5s ease-in-out' }}>
-            <span style={{ backgroundColor: 'rgba(255,255,255,0.2)', color: banners[currentSlide].accent, width: 'fit-content', padding: '4px 10px', borderRadius: '4px', fontSize: '11px', fontWeight: 'bold', marginBottom: '12px' }}>
-              {banners[currentSlide].tag}
-            </span>
-            <h2 style={{ fontSize: '28px', margin: '0 0 8px 0', fontWeight: '800' }}>{banners[currentSlide].title}</h2>
-            <p style={{ color: '#cbd5e1', fontSize: '15px', margin: '0 0 20px 0' }}>{banners[currentSlide].subtitle}</p>
-            <a href="https://wa.me/6282110898948?text=Halo%20Laptop%20Square,%20mau%20tanya%20promo" target="_blank" rel="noopener noreferrer" style={{ backgroundColor: banners[currentSlide].accent, color: '#0f172a', padding: '10px 20px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold', width: 'fit-content', fontSize: '13px' }}>
-              Klaim Promo Sekarang 🚀
-            </a>
-          </div>
+          {banners[currentSlide].mediaUrl ? (
+            banners[currentSlide].type === "video" ? (
+              <video src={banners[currentSlide].mediaUrl} autoPlay loop muted style={{ width: '100%', height: '240px', objectFit: 'cover' }} />
+            ) : (
+              <img src={banners[currentSlide].mediaUrl} alt="Banner Promo" style={{ width: '100%', height: '240px', objectFit: 'cover' }} />
+            )
+          ) : (
+            <div style={{ background: banners[currentSlide].bg, color: 'white', padding: '40px 30px', minHeight: '200px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <span style={{ backgroundColor: 'rgba(255,255,255,0.2)', color: banners[currentSlide].accent, width: 'fit-content', padding: '4px 10px', borderRadius: '4px', fontSize: '11px', fontWeight: 'bold', marginBottom: '12px' }}>
+                {banners[currentSlide].tag}
+              </span>
+              <h2 style={{ fontSize: '28px', margin: '0 0 8px 0', fontWeight: '800' }}>{banners[currentSlide].title}</h2>
+              <p style={{ color: '#cbd5e1', fontSize: '15px', margin: '0 0 20px 0' }}>{banners[currentSlide].subtitle}</p>
+              <a href="https://wa.me/6282110898948?text=Halo%20Laptop%20Square,%20mau%20tanya%20promo" target="_blank" rel="noopener noreferrer" style={{ backgroundColor: banners[currentSlide].accent, color: '#0f172a', padding: '10px 20px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold', width: 'fit-content', fontSize: '13px' }}>
+                Klaim Promo Sekarang 🚀
+              </a>
+            </div>
+          )}
           
-          {/* Slider Dots Indicator */}
           <div style={{ position: 'absolute', bottom: '15px', right: '20px', display: 'flex', gap: '6px' }}>
             {banners.map((_, idx) => (
               <button 
@@ -167,10 +191,9 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 3. GOOGLE REVIEW WIDGET SECTION (Tengah) */}
+        {/* 3. HIGHLIGHT 3 GOOGLE REVIEWS */}
         <section style={{ backgroundColor: 'white', borderRadius: '16px', padding: '24px', marginBottom: '35px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-            {/* Skor Rating Google */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
               <div style={{ textAlign: 'center', paddingRight: '15px', borderRight: '2px solid #f1f5f9' }}>
                 <span style={{ fontSize: '32px', fontWeight: 'bold', color: '#0f172a', display: 'block', lineHeight: '1' }}>4.9</span>
@@ -178,7 +201,7 @@ export default function Home() {
               </div>
               <div>
                 <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 'bold', color: '#0f172a' }}>BAGUS SEKALI</h3>
-                <p style={{ margin: '2px 0 0 0', fontSize: '12px', color: '#64748b' }}>Berdasarkan ratusan ulasan pelanggan di <strong>Google Reviews</strong></p>
+                <p style={{ margin: '2px 0 0 0', fontSize: '12px', color: '#64748b' }}>Berdasarkan ulasan pelanggan asli di <strong>Google Reviews</strong></p>
               </div>
             </div>
 
@@ -187,8 +210,7 @@ export default function Home() {
             </a>
           </div>
 
-          {/* Grid Kartu Ulasan */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '15px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '15px' }}>
             {googleReviews.map((rev, idx) => (
               <div key={idx} style={{ backgroundColor: '#f8fafc', border: '1px solid #f1f5f9', borderRadius: '12px', padding: '16px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
@@ -211,20 +233,49 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 4. PRODUK ANDALAN (PROMO & RANDOM FEATURED) */}
+        {/* 4. FILTER MEREK LENGKAP & KATALOG PRODUK */}
         <section>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
             <div>
-              <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 'bold', color: '#0f172a' }}>⭐ Produk Andalan & Rekomendasi</h3>
-              <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#64748b' }}>Pilihan laptop terbaik dengan harga promo menarik minggu ini</p>
+              <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 'bold', color: '#0f172a' }}>⭐ Produk Pilihan & Rekomendasi</h3>
+              <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#64748b' }}>
+                {selectedBrand === 'ALL' ? 'Menampilkan 8 produk rekomendasi acak' : `Menampilkan produk merek ${selectedBrand}`}
+              </p>
+            </div>
+
+            {/* Filter Merek Lengkap */}
+            <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '6px', maxWidth: '100%' }}>
+              {brands.map((brand) => (
+                <button
+                  key={brand}
+                  onClick={() => handleSelectBrand(brand)}
+                  style={{
+                    padding: '6px 14px',
+                    borderRadius: '16px',
+                    border: '1px solid #cbd5e1',
+                    backgroundColor: selectedBrand === brand ? '#0f172a' : 'white',
+                    color: selectedBrand === brand ? 'white' : '#475569',
+                    cursor: 'pointer',
+                    fontWeight: '600',
+                    fontSize: '12px',
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  {brand}
+                </button>
+              ))}
             </div>
           </div>
 
           {loading ? (
-            <p style={{ textAlign: 'center', color: '#64748b', margin: '40px 0' }}>Memuat produk rekomendasi...</p>
+            <p style={{ textAlign: 'center', color: '#64748b', margin: '40px 0' }}>Memuat produk...</p>
+          ) : displayedProducts.length === 0 ? (
+            <div style={{ textAlign: 'center', backgroundColor: 'white', padding: '40px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+              <p style={{ color: '#64748b', margin: 0 }}>Belum ada produk untuk merek {selectedBrand}.</p>
+            </div>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))', gap: '20px' }}>
-              {featuredProducts.map((product) => (
+              {displayedProducts.map((product) => (
                 <div 
                   key={product.id} 
                   onClick={() => setSelectedProduct(product)}
@@ -261,7 +312,7 @@ export default function Home() {
 
       </main>
 
-      {/* POP-UP MODAL SPESIFIKASI PRODUK */}
+      {/* MODAL SPESIFIKASI */}
       {selectedProduct && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(15, 23, 42, 0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
           <div style={{ backgroundColor: 'white', borderRadius: '12px', maxWidth: '480px', width: '100%', padding: '24px', boxShadow: '0 20px 25px rgba(0, 0, 0, 0.3)', position: 'relative', maxHeight: '90vh', overflowY: 'auto' }}>
