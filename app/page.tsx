@@ -9,6 +9,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [selectedBrand, setSelectedBrand] = useState('ALL');
   const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
+  const [isImageZoomed, setIsImageZoomed] = useState(false); // State untuk kontrol besar gambar
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const mapsUrl = "https://www.google.com/maps/place/Laptop+Square+BEC/@-6.9078216,107.6087898,17z/data=!3m1!4b1!4m6!3m5!1s0x2e68e638090867fd:0x5b1dfccd504a25c5!8m2!3d-6.9078216!4d107.6087898!16s%2Fg%2F1pzwhkpd7?entry=ttu";
@@ -280,7 +281,10 @@ export default function Home() {
                 return (
                   <div 
                     key={product.id} 
-                    onClick={() => setSelectedProduct(product)}
+                    onClick={() => {
+                      setSelectedProduct(product);
+                      setIsImageZoomed(false);
+                    }}
                     style={{ backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '12px', overflow: 'hidden', display: 'flex', flexDirection: 'column', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}
                   >
                     <div style={{ height: '140px', backgroundColor: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10px', borderBottom: '1px solid #f1f5f9' }}>
@@ -315,19 +319,58 @@ export default function Home() {
 
       </main>
 
-      {/* MODAL SPESIFIKASI DENGAN GAMBAR LEBIH BESAR & JELAS */}
+      {/* MODAL SPESIFIKASI DENGAN GAMBAR INTERAKTIF ZOOM */}
       {selectedProduct && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(15, 23, 42, 0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
           <div style={{ backgroundColor: 'white', borderRadius: '16px', maxWidth: '520px', width: '100%', padding: '24px', boxShadow: '0 20px 25px rgba(0, 0, 0, 0.3)', position: 'relative', maxHeight: '90vh', overflowY: 'auto' }}>
             
-            <button onClick={() => setSelectedProduct(null)} style={{ position: 'absolute', top: '16px', right: '16px', backgroundColor: '#f1f5f9', border: 'none', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer', fontWeight: 'bold', color: '#64748b', fontSize: '14px' }}>
+            <button 
+              onClick={() => {
+                setSelectedProduct(null);
+                setIsImageZoomed(false);
+              }} 
+              style={{ position: 'absolute', top: '16px', right: '16px', backgroundColor: '#f1f5f9', border: 'none', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer', fontWeight: 'bold', color: '#64748b', fontSize: '14px', zIndex: 10 }}
+            >
               ✕
             </button>
 
-            {/* TAMPILAN GAMBAR PRODUK LEBIH BESAR & JERNIH (240px) */}
-            <div style={{ width: '100%', height: '240px', backgroundColor: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', marginBottom: '20px', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)' }}>
+            {/* KOTAK GAMBAR PRODUK - DIKLIK UNTUK DIZOOM / DIPERBESAR */}
+            <div 
+              onClick={() => setIsImageZoomed(!isImageZoomed)}
+              style={{ 
+                width: '100%', 
+                height: isImageZoomed ? '320px' : '180px', // Otomatis membesar saat diklik
+                backgroundColor: '#ffffff', 
+                borderRadius: '12px', 
+                border: isImageZoomed ? '2px solid #38bdf8' : '1px solid #e2e8f0', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justify: 'center', 
+                padding: isImageZoomed ? '20px' : '10px', 
+                marginBottom: '16px', 
+                cursor: 'pointer',
+                position: 'relative',
+                transition: 'all 0.3s ease-in-out',
+                boxShadow: isImageZoomed ? '0 10px 20px rgba(0,0,0,0.08)' : 'none'
+              }}
+            >
               {getProductImage(selectedProduct) ? (
-                <img src={getProductImage(selectedProduct)!} alt={selectedProduct.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+                <>
+                  <img 
+                    src={getProductImage(selectedProduct)!} 
+                    alt={selectedProduct.name} 
+                    style={{ 
+                      maxWidth: '100%', 
+                      maxHeight: '100%', 
+                      objectFit: 'contain',
+                      transform: isImageZoomed ? 'scale(1.05)' : 'scale(1)',
+                      transition: 'transform 0.3s ease-in-out'
+                    }} 
+                  />
+                  <span style={{ position: 'absolute', bottom: '8px', right: '8px', backgroundColor: 'rgba(15, 23, 42, 0.7)', color: 'white', fontSize: '10px', padding: '3px 8px', borderRadius: '6px', fontWeight: 'bold' }}>
+                    {isImageZoomed ? '🔍 Klik untuk Mengecilkan' : '🔍 Klik untuk Membesar'}
+                  </span>
+                </>
               ) : (
                 <span style={{ color: '#94a3b8', fontSize: '16px', fontWeight: 'bold' }}>{selectedProduct.brand}</span>
               )}
