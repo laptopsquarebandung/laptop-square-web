@@ -12,6 +12,12 @@ export default function Home() {
   const [isImageZoomed, setIsImageZoomed] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
 
+  // STATE BARU UNTUK SEARCH & PRICE RANGE FILTER
+  const [searchQuery, setSearchQuery] = useState('');
+  const [minPrice, setMinPrice] = useState<number>(0);
+  const [maxPrice, setMaxPrice] = useState<number>(50000000);
+  const [highestCatalogPrice, setHighestCatalogPrice] = useState<number>(50000000);
+
   const mapsUrl = "https://www.google.com/maps/place/Laptop+Square+BEC/@-6.9078216,107.6087898,17z/data=!3m1!4b1!4m6!3m5!1s0x2e68e638090867fd:0x5b1dfccd504a25c5!8m2!3d-6.9078216!4d107.6087898!16s%2Fg%2F1pzwhkpd7?entry=ttu";
 
   const brands = ['ALL', 'Lenovo', 'HP', 'Acer', 'ASUS', 'MSI', 'Apple', 'Axioo', 'Advan', 'Zyrex', 'Colorful'];
@@ -72,6 +78,12 @@ export default function Home() {
         console.error("Gagal mengambil data:", error);
       } else if (data && data.length > 0) {
         setAllProducts(data);
+        
+        // Hitung harga tertinggi katalog untuk set batas maksimum slider
+        const maxVal = Math.max(...data.map((p: any) => Number(p.price) || 0));
+        setHighestCatalogPrice(maxVal > 0 ? maxVal : 50000000);
+        setMaxPrice(maxVal > 0 ? maxVal : 50000000);
+
         const shuffled = [...data].sort(() => 0.5 - Math.random());
         setDisplayedProducts(shuffled.slice(0, 8));
       }
@@ -80,15 +92,51 @@ export default function Home() {
     getProducts();
   }, []);
 
-  const handleSelectBrand = (brand: string) => {
-    setSelectedBrand(brand);
-    if (brand === 'ALL') {
-      const shuffled = [...allProducts].sort(() => 0.5 - Math.random());
+  // LOGIKA PENCARIAN & FILTER
+  useEffect(() => {
+    if (allProducts.length === 0) return;
+
+    let filtered = [...allProducts];
+
+    // Filter Brand
+    if (selectedBrand !== 'ALL') {
+      filtered = filtered.filter(p => p.brand?.toLowerCase() === selectedBrand.toLowerCase());
+    }
+
+    // Filter Nama / Specs
+    if (searchQuery.trim() !== '') {
+      const q = searchQuery.toLowerCase();
+      filtered = filtered.filter(p => 
+        p.name?.toLowerCase().includes(q) || 
+        p.specs?.toLowerCase().includes(q) ||
+        p.brand?.toLowerCase().includes(q)
+      );
+    }
+
+    // Filter Range Harga
+    filtered = filtered.filter(p => {
+      const price = Number(p.price) || 0;
+      return price >= minPrice && price <= maxPrice;
+    });
+
+    // Tampilkan 8 acak jika dalam mode ALL awal tanpa ketikan search
+    if (selectedBrand === 'ALL' && searchQuery.trim() === '' && minPrice === 0 && maxPrice === highestCatalogPrice) {
+      const shuffled = [...filtered].sort(() => 0.5 - Math.random());
       setDisplayedProducts(shuffled.slice(0, 8));
     } else {
-      const filtered = allProducts.filter(p => p.brand?.toLowerCase() === brand.toLowerCase());
       setDisplayedProducts(filtered);
     }
+  }, [searchQuery, selectedBrand, minPrice, maxPrice, allProducts, highestCatalogPrice]);
+
+  const handleSelectBrand = (brand: string) => {
+    setSelectedBrand(brand);
+  };
+
+  const handleResetFilter = () => {
+    setSearchQuery('');
+    setSelectedBrand('ALL');
+    setMinPrice(0);
+    setMaxPrice(highestCatalogPrice);
   };
 
   const renderSpecs = (specsData: any) => {
@@ -161,7 +209,7 @@ export default function Home() {
 
       <main style={{ maxWidth: '1200px', margin: '20px auto 0 auto', padding: '0 20px' }}>
         
-        {/* 2. ROLLING BANNER (Menggunakan Aspect Ratio 1920x640 agar Pas Penuh Tanpa Sisa Hitam) */}
+        {/* 2. ROLLING BANNER */}
         <section style={{ position: 'relative', width: '100%', aspectRatio: '1920 / 640', borderRadius: '16px', overflow: 'hidden', marginBottom: '30px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)' }}>
           {banners[currentSlide].mediaUrl ? (
             banners[currentSlide].type === "video" ? (
@@ -235,13 +283,109 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 4. KATALOG PRODUK */}
+        {/* 4. SEKSI FITUR PENCARIAN & FILTER HARGA */}
+        <section style={{ backgroundColor: 'white', borderRadius: '16px', padding: '20px', marginBottom: '25px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.02)' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            
+            {/* SEARCH INPUT BAR */}
+            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              <div style={{ position: 'relative', flex: 1, minWidth: '260px' }}>
+                <input 
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="🔍 Cari laptop, spesifikasi (Core i5, RTX 4050, OLED, RAM 16GB)..."
+                  style={{
+                    width: '100%',
+                    padding: '12px 16px',
+                    borderRadius: '10px',
+                    border: '1px solid #cbd5e1',
+                    fontSize: '14px',
+                    outline: 'none',
+                    backgroundColor: '#f8fafc',
+                    boxSizing: 'border-box'
+                  }}
+                />
+                {searchQuery && (
+                  <button 
+                    onClick={() => setSearchQuery('')}
+                    style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', border: 'none', background: 'none', cursor: 'pointer', color: '#94a3b8', fontWeight: 'bold' }}
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+
+              {(searchQuery || selectedBrand !== 'ALL' || minPrice > 0 || maxPrice < highestCatalogPrice) && (
+                <button
+                  onClick={handleResetFilter}
+                  style={{
+                    backgroundColor: '#f1f5f9',
+                    color: '#475569',
+                    border: '1px solid #cbd5e1',
+                    padding: '0 16px',
+                    borderRadius: '10px',
+                    fontSize: '13px',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  🔄 Reset Filter
+                </button>
+              )}
+            </div>
+
+            {/* FILTER RANGE HARGA */}
+            <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '14px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
+                <span style={{ fontSize: '13px', fontWeight: 'bold', color: '#0f172a' }}>💰 Filter Range Harga:</span>
+                <span style={{ fontSize: '13px', fontWeight: 'bold', color: '#0284c7' }}>
+                  Rp {minPrice.toLocaleString('id-ID')} — Rp {maxPrice.toLocaleString('id-ID')}
+                </span>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px', alignItems: 'center' }}>
+                <div>
+                  <label style={{ fontSize: '11px', color: '#64748b', display: 'block', marginBottom: '4px' }}>Harga Minimal:</label>
+                  <input 
+                    type="range" 
+                    min={0} 
+                    max={highestCatalogPrice} 
+                    step={500000}
+                    value={minPrice}
+                    onChange={(e) => setMinPrice(Math.min(Number(e.target.value), maxPrice - 500000))}
+                    style={{ width: '100%', accentColor: '#0284c7', cursor: 'pointer' }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ fontSize: '11px', color: '#64748b', display: 'block', marginBottom: '4px' }}>Harga Maksimal:</label>
+                  <input 
+                    type="range" 
+                    min={0} 
+                    max={highestCatalogPrice} 
+                    step={500000}
+                    value={maxPrice}
+                    onChange={(e) => setMaxPrice(Math.max(Number(e.target.value), minPrice + 500000))}
+                    style={{ width: '100%', accentColor: '#0284c7', cursor: 'pointer' }}
+                  />
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        {/* 5. KATALOG PRODUK */}
         <section>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
             <div>
               <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 'bold', color: '#0f172a' }}>⭐ Produk Pilihan & Rekomendasi</h3>
               <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#64748b' }}>
-                {selectedBrand === 'ALL' ? 'Menampilkan 8 produk rekomendasi acak' : `Menampilkan produk merek ${selectedBrand}`}
+                Menampilkan {displayedProducts.length} produk
+                {selectedBrand !== 'ALL' && ` merek ${selectedBrand}`}
+                {searchQuery && ` dengan kata kunci "${searchQuery}"`}
               </p>
             </div>
 
@@ -272,7 +416,18 @@ export default function Home() {
             <p style={{ textAlign: 'center', color: '#64748b', margin: '40px 0' }}>Memuat produk...</p>
           ) : displayedProducts.length === 0 ? (
             <div style={{ textAlign: 'center', backgroundColor: 'white', padding: '40px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-              <p style={{ color: '#64748b', margin: 0 }}>Belum ada produk untuk merek {selectedBrand}.</p>
+              <p style={{ color: '#0f172a', fontWeight: 'bold', fontSize: '15px', margin: '0 0 6px 0' }}>
+                Tidak ditemukan produk yang sesuai filter.
+              </p>
+              <p style={{ color: '#64748b', fontSize: '13px', margin: '0 0 16px 0' }}>
+                Coba kurangi kata kunci pencarian atau sesuaikan kembali range harga Anda.
+              </p>
+              <button
+                onClick={handleResetFilter}
+                style={{ backgroundColor: '#0284c7', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' }}
+              >
+                Reset Filter Pencarian
+              </button>
             </div>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))', gap: '20px' }}>
