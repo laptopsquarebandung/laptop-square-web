@@ -161,13 +161,13 @@ export default function Home() {
 
       <main style={{ maxWidth: '1200px', margin: '20px auto 0 auto', padding: '0 20px' }}>
         
-        {/* 2. ROLLING BANNER */}
-        <section style={{ position: 'relative', borderRadius: '16px', overflow: 'hidden', marginBottom: '30px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)' }}>
+        {/* 2. ROLLING BANNER (Disesuaikan agar gambar Canva 1920x640 tidak terpotong) */}
+        <section style={{ position: 'relative', borderRadius: '16px', overflow: 'hidden', marginBottom: '30px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)', backgroundColor: '#0f172a' }}>
           {banners[currentSlide].mediaUrl ? (
             banners[currentSlide].type === "video" ? (
-              <video src={banners[currentSlide].mediaUrl} autoPlay loop muted style={{ width: '100%', height: '240px', objectFit: 'cover' }} />
+              <video src={banners[currentSlide].mediaUrl} autoPlay loop muted style={{ width: '100%', height: 'auto', maxHeight: '360px', objectFit: 'contain', display: 'block', margin: '0 auto' }} />
             ) : (
-              <img src={banners[currentSlide].mediaUrl} alt="Banner Promo" style={{ width: '100%', height: '240px', objectFit: 'cover' }} />
+              <img src={banners[currentSlide].mediaUrl} alt="Banner Promo" style={{ width: '100%', height: 'auto', maxHeight: '360px', objectFit: 'contain', display: 'block', margin: '0 auto' }} />
             )
           ) : (
             <div style={{ background: banners[currentSlide].bg, color: 'white', padding: '40px 30px', minHeight: '200px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
