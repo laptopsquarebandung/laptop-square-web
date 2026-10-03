@@ -161,16 +161,16 @@ export default function Home() {
 
       <main style={{ maxWidth: '1200px', margin: '20px auto 0 auto', padding: '0 20px' }}>
         
-        {/* 2. ROLLING BANNER (Disesuaikan agar gambar Canva 1920x640 tidak terpotong) */}
-        <section style={{ position: 'relative', borderRadius: '16px', overflow: 'hidden', marginBottom: '30px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)', backgroundColor: '#0f172a' }}>
+        {/* 2. ROLLING BANNER (Menggunakan Aspect Ratio 1920x640 agar Pas Penuh Tanpa Sisa Hitam) */}
+        <section style={{ position: 'relative', width: '100%', aspectRatio: '1920 / 640', borderRadius: '16px', overflow: 'hidden', marginBottom: '30px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)' }}>
           {banners[currentSlide].mediaUrl ? (
             banners[currentSlide].type === "video" ? (
-              <video src={banners[currentSlide].mediaUrl} autoPlay loop muted style={{ width: '100%', height: 'auto', maxHeight: '360px', objectFit: 'contain', display: 'block', margin: '0 auto' }} />
+              <video src={banners[currentSlide].mediaUrl} autoPlay loop muted style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
             ) : (
-              <img src={banners[currentSlide].mediaUrl} alt="Banner Promo" style={{ width: '100%', height: 'auto', maxHeight: '360px', objectFit: 'contain', display: 'block', margin: '0 auto' }} />
+              <img src={banners[currentSlide].mediaUrl} alt="Banner Promo" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
             )
           ) : (
-            <div style={{ background: banners[currentSlide].bg, color: 'white', padding: '40px 30px', minHeight: '200px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <div style={{ background: banners[currentSlide].bg, color: 'white', padding: '40px 30px', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
               <span style={{ backgroundColor: 'rgba(255,255,255,0.2)', color: banners[currentSlide].accent, width: 'fit-content', padding: '4px 10px', borderRadius: '4px', fontSize: '11px', fontWeight: 'bold', marginBottom: '12px' }}>
                 {banners[currentSlide].tag}
               </span>
