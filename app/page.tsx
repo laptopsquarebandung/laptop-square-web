@@ -19,7 +19,7 @@ export default function Home() {
   const banners = [
     {
       type: "image",
-      mediaUrl: "", 
+      mediaUrl: "https://mugcnbapivtaplnjzuvq.supabase.co/storage/v1/object/public/products/banner/hello%20oktober.png", 
       title: "PROMO SPESIAL LAPTOP SQUARE BEC",
       subtitle: "Bebas Pilih Bonus Aksesoris & Garansi Resmi!",
       tag: "PROMO BEC",
@@ -28,10 +28,10 @@ export default function Home() {
     },
     {
       type: "image",
-      mediaUrl: "", 
-      title: "PUSAT SERVICE & UPGRADE LAPTOP BANDUNG",
-      subtitle: "Pengerjaan Cepat, Transparan & Bergaransi",
-      tag: "SERVICE CENTER BEC",
+      mediaUrl: "https://mugcnbapivtaplnjzuvq.supabase.co/storage/v1/object/public/products/banner/kesaktian%20pancasila.png", 
+      title: "",
+      subtitle: "",
+      tag: "",
       bg: "linear-gradient(135deg, #0284c7 0%, #0f172a 100%)",
       accent: "#facc15"
     }
