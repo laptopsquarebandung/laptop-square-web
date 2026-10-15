@@ -12,7 +12,7 @@ export default function Home() {
   const [isImageZoomed, setIsImageZoomed] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  // STATE BARU UNTUK SEARCH & PRICE RANGE FILTER
+  // STATE UNTUK SEARCH & PRICE RANGE FILTER
   const [searchQuery, setSearchQuery] = useState('');
   const [minPrice, setMinPrice] = useState<number>(0);
   const [maxPrice, setMaxPrice] = useState<number>(50000000);
@@ -79,7 +79,6 @@ export default function Home() {
       } else if (data && data.length > 0) {
         setAllProducts(data);
         
-        // Hitung harga tertinggi katalog untuk set batas maksimum slider
         const maxVal = Math.max(...data.map((p: any) => Number(p.price) || 0));
         setHighestCatalogPrice(maxVal > 0 ? maxVal : 50000000);
         setMaxPrice(maxVal > 0 ? maxVal : 50000000);
@@ -98,12 +97,10 @@ export default function Home() {
 
     let filtered = [...allProducts];
 
-    // Filter Brand
     if (selectedBrand !== 'ALL') {
       filtered = filtered.filter(p => p.brand?.toLowerCase() === selectedBrand.toLowerCase());
     }
 
-    // Filter Nama / Specs
     if (searchQuery.trim() !== '') {
       const q = searchQuery.toLowerCase();
       filtered = filtered.filter(p => 
@@ -113,13 +110,11 @@ export default function Home() {
       );
     }
 
-    // Filter Range Harga
     filtered = filtered.filter(p => {
       const price = Number(p.price) || 0;
       return price >= minPrice && price <= maxPrice;
     });
 
-    // Tampilkan 8 acak jika dalam mode ALL awal tanpa ketikan search
     if (selectedBrand === 'ALL' && searchQuery.trim() === '' && minPrice === 0 && maxPrice === highestCatalogPrice) {
       const shuffled = [...filtered].sort(() => 0.5 - Math.random());
       setDisplayedProducts(shuffled.slice(0, 8));
@@ -161,6 +156,17 @@ export default function Home() {
       return `https://mugcnbapivtaplnjzuvq.supabase.co/storage/v1/object/public/products/${product.slug}.jpg`;
     }
     return null;
+  };
+
+  // HELPER UNTUK DRAFT PESAN WHATSAPP LENGKAP DENGAN SPESIFIKASI
+  const getWhatsAppLink = (product: any) => {
+    const name = product.name || '';
+    const price = `Rp ${Number(product.price).toLocaleString('id-ID')}`;
+    const specs = typeof product.specs === 'string' ? product.specs : String(product.specs || '-');
+    
+    const message = `Halo Laptop Square, saya tertarik dengan ${name} (${price}).\n\nSpesifikasi:\n${specs}\n\nApakah stok ready di BEC?`;
+    
+    return `https://wa.me/6282110898948?text=${encodeURIComponent(message)}`;
   };
 
   return (
@@ -542,8 +548,9 @@ export default function Home() {
               {renderSpecs(selectedProduct.specs)}
             </div>
 
+            {/* TOMBOL WHATSAPP DENGAN DETAIL SPESIFIKASI LENGKAP */}
             <a 
-              href={`https://wa.me/6282110898948?text=Halo%20Laptop%20Square,%20saya%20tertarik%20dengan%20${encodeURIComponent(selectedProduct.name)}\%20(Rp\%20${Number(selectedProduct.price).toLocaleString('id-ID')}).%20Apakah%20stok%20ready%20di%20BEC?`}
+              href={getWhatsAppLink(selectedProduct)}
               target="_blank"
               rel="noopener noreferrer"
               style={{ display: 'block', textAlign: 'center', backgroundColor: '#25d366', color: 'white', padding: '12px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold', fontSize: '14px' }}
