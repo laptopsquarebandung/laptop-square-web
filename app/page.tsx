@@ -17,6 +17,8 @@ export default function Home() {
   const [minPrice, setMinPrice] = useState<number>(0);
   const [maxPrice, setMaxPrice] = useState<number>(50000000);
   const [highestCatalogPrice, setHighestCatalogPrice] = useState<number>(50000000);
+  // Batas jumlah produk yang ditampilkan (tombol "Muat Lebih Banyak")
+  const [showCount, setShowCount] = useState<number>(24);
 
   const mapsUrl = "https://www.google.com/maps/place/Laptop+Square+BEC/@-6.9078216,107.6087898,17z/data=!3m1!4b1!4m6!3m5!1s0x2e68e638090867fd:0x5b1dfccd504a25c5!8m2!3d-6.9078216!4d107.6087898!16s%2Fg%2F1pzwhkpd7?entry=ttu";
 
@@ -31,15 +33,6 @@ export default function Home() {
       tag: "PROMO BEC",
       bg: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
       accent: "#38bdf8"
-    },
-    {
-      type: "image",
-      mediaUrl: "https://mugcnbapivtaplnjzuvq.supabase.co/storage/v1/object/public/products/banner/kesaktian%20pancasila.png", 
-      title: "",
-      subtitle: "",
-      tag: "",
-      bg: "linear-gradient(135deg, #0284c7 0%, #0f172a 100%)",
-      accent: "#facc15"
     }
   ];
 
@@ -65,6 +58,7 @@ export default function Home() {
   ];
 
   useEffect(() => {
+    if (banners.length <= 1) return;
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % banners.length);
     }, 5000);
@@ -84,7 +78,7 @@ export default function Home() {
         setMaxPrice(maxVal > 0 ? maxVal : 50000000);
 
         const shuffled = [...data].sort(() => 0.5 - Math.random());
-        setDisplayedProducts(shuffled.slice(0, 8));
+        setDisplayedProducts(shuffled);
       }
       setLoading(false);
     }
@@ -117,11 +111,16 @@ export default function Home() {
 
     if (selectedBrand === 'ALL' && searchQuery.trim() === '' && minPrice === 0 && maxPrice === highestCatalogPrice) {
       const shuffled = [...filtered].sort(() => 0.5 - Math.random());
-      setDisplayedProducts(shuffled.slice(0, 8));
+      setDisplayedProducts(shuffled);
     } else {
       setDisplayedProducts(filtered);
     }
   }, [searchQuery, selectedBrand, minPrice, maxPrice, allProducts, highestCatalogPrice]);
+
+  // Reset batas tampil setiap kali filter berubah
+  useEffect(() => {
+    setShowCount(24);
+  }, [searchQuery, selectedBrand, minPrice, maxPrice]);
 
   const handleSelectBrand = (brand: string) => {
     setSelectedBrand(brand);
@@ -133,6 +132,9 @@ export default function Home() {
     setMinPrice(0);
     setMaxPrice(highestCatalogPrice);
   };
+
+  // Produk yang benar-benar dirender (dibatasi showCount)
+  const visibleProducts = displayedProducts.slice(0, showCount);
 
   const renderSpecs = (specsData: any) => {
     if (!specsData) return "Hubungi tim Laptop Square untuk detail ketersediaan varian spesifikasi lengkap.";
@@ -389,7 +391,7 @@ export default function Home() {
             <div>
               <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 'bold', color: '#0f172a' }}>⭐ Produk Pilihan & Rekomendasi</h3>
               <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#64748b' }}>
-                Menampilkan {displayedProducts.length} produk
+                Menampilkan {Math.min(showCount, displayedProducts.length)} dari {displayedProducts.length} produk
                 {selectedBrand !== 'ALL' && ` merek ${selectedBrand}`}
                 {searchQuery && ` dengan kata kunci "${searchQuery}"`}
               </p>
@@ -437,7 +439,7 @@ export default function Home() {
             </div>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))', gap: '20px' }}>
-              {displayedProducts.map((product) => {
+              {visibleProducts.map((product) => {
                 const img = getProductImage(product);
                 return (
                   <div 
@@ -448,12 +450,26 @@ export default function Home() {
                     }}
                     style={{ backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '12px', overflow: 'hidden', display: 'flex', flexDirection: 'column', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}
                   >
-                    <div style={{ height: '140px', backgroundColor: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10px', borderBottom: '1px solid #f1f5f9' }}>
+                    <div style={{ height: '140px', backgroundColor: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10px', borderBottom: '1px solid #f1f5f9', position: 'relative' }}>
                       {img ? (
-                        <img src={img} alt={product.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+                        <img src={img} alt={product.name} loading="lazy" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
                       ) : (
                         <span style={{ color: '#94a3b8', fontSize: '12px', fontWeight: 'bold' }}>{product.brand}</span>
                       )}
+                      {(() => {
+                        const st = String(product.stock_status || 'Ready').toLowerCase();
+                        const isReady = !['habis', 'kosong', 'sold', 'sold out', 'empty', 'out of stock'].includes(st);
+                        return (
+                          <span style={{
+                            position: 'absolute', top: '8px', left: '8px',
+                            backgroundColor: isReady ? '#16a34a' : '#94a3b8',
+                            color: 'white', fontSize: '10px', fontWeight: 'bold',
+                            padding: '3px 8px', borderRadius: '6px'
+                          }}>
+                            {isReady ? '✓ READY' : 'STOK HABIS'}
+                          </span>
+                        );
+                      })()}
                     </div>
 
                     <div style={{ padding: '14px', display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'space-between' }}>
@@ -474,6 +490,17 @@ export default function Home() {
                   </div>
                 );
               })}
+            </div>
+          )}
+
+          {displayedProducts.length > showCount && (
+            <div style={{ textAlign: 'center', marginTop: '24px' }}>
+              <button
+                onClick={() => setShowCount(showCount + 24)}
+                style={{ backgroundColor: '#2563eb', color: 'white', border: 'none', padding: '12px 32px', borderRadius: '8px', fontSize: '14px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 2px 6px rgba(37,99,235,0.3)' }}
+              >
+                Muat Lebih Banyak ({displayedProducts.length - showCount} produk lagi)
+              </button>
             </div>
           )}
         </section>
