@@ -27,7 +27,7 @@ export default function Home() {
   const banners = [
     {
       type: "image",
-      mediaUrl: "https://mugcnbapivtaplnjzuvq.supabase.co/storage/v1/object/public/products/banner/hello%20oktober.png", 
+      mediaUrl: "https://mugcnbapivtaplnjzuvq.supabase.co/storage/v1/object/public/products/banner/hello%20november.png", 
       title: "PROMO SPESIAL LAPTOP SQUARE BEC",
       subtitle: "Bebas Pilih Bonus Aksesoris & Garansi Resmi!",
       tag: "PROMO BEC",
