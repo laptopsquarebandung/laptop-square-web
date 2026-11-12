@@ -13,8 +13,17 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "LAPTOP SQUARE",
-  description: "Katalog resmi Laptop Square",
+  title: "LAPTOP SQUARE | Pusat Laptop Resmi Istana BEC Bandung",
+  description: "Pusat laptop baru terlengkap di Istana BEC Lantai 1 Blok H16 Bandung. Jual laptop ASUS, Lenovo, HP, Acer, Apple, MSI dengan 100% garansi resmi, promo cicilan 0%, dan bonus software siap pakai.",
+  keywords: [
+    "laptop square bec",
+    "laptop bandung",
+    "toko laptop istana bec",
+    "laptop asus bandung",
+    "laptop lenovo bandung",
+    "laptop gaming bandung",
+    "cicilan laptop 0 bandung"
+  ],
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
