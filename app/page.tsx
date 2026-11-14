@@ -1641,14 +1641,15 @@ export default function Home() {
                 setSelectedProduct(null);
                 setIsImageZoomed(false);
               }}
-              className="absolute top-5 right-5 w-8 h-8 rounded-lg flex items-center justify-center font-bold cursor-pointer"
+              className="absolute top-3.5 right-3.5 z-20 w-8 h-8 rounded-lg flex items-center justify-center shadow-sm cursor-pointer transition-transform hover:scale-105"
               style={{
-                backgroundColor: "var(--surface)",
-                border: "1px solid var(--border)",
+                backgroundColor: "var(--bg)",
+                border: "1px solid var(--border-strong)",
+                color: "var(--text-primary)",
               }}
               aria-label="Tutup"
             >
-              ✕
+              <X className="w-4 h-4" />
             </button>
 
             <div
