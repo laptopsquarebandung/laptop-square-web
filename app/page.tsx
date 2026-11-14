@@ -10,22 +10,12 @@ import {
   Search,
   X,
   MapPin,
-  ShieldCheck,
-  Cpu,
-  HardDrive,
-  Layers,
-  Monitor,
   ChevronRight,
   ChevronDown,
-  ChevronLeft,
   Laptop,
   MessageCircle,
   RotateCcw,
   ArrowUpDown,
-  Check,
-  Plus,
-  Minus,
-  ShoppingBag,
   ExternalLink,
   Clock,
   Sun,
@@ -35,11 +25,6 @@ import {
 const MAPS_URL =
   "https://www.google.com/maps/place/Laptop+Square+BEC/@-6.9078216,107.6087898,17z/data=!3m1!4b1!4m6!3m5!1s0x2e68e638090867fd:0x5b1dfccd504a25c5!8m2!3d-6.9078216!4d107.6087898!16s%2Fg%2F1pzwhkpd7?entry=ttu";
 const WA_PHONE = "6282110898948";
-
-interface CartItem {
-  product: Product;
-  quantity: number;
-}
 
 const FINISH_SWATCHES = [
   {
@@ -62,65 +47,34 @@ const FINISH_SWATCHES = [
   },
 ];
 
-const HERO_GALLERY = [
-  {
-    title: "Lenovo Yoga Slim 7 OLED",
-    tag: "Ultrabook Flagship",
-    image:
-      "https://mugcnbapivtaplnjzuvq.supabase.co/storage/v1/object/public/products/lenovo-yoga-slim-7-83qm002gid-luna-grey.jpg",
-  },
-  {
-    title: "Apple MacBook M-Series",
-    tag: "Creator Reference",
-    image:
-      "https://mugcnbapivtaplnjzuvq.supabase.co/storage/v1/object/public/products/apple-macbook-neo-mhfa4id-a-silver.jpg",
-  },
-  {
-    title: "ASUS Business & Pro Series",
-    tag: "Enterprise Grade",
-    image:
-      "https://mugcnbapivtaplnjzuvq.supabase.co/storage/v1/object/public/products/asus-pm3406chap-ly7152ws.jpg",
-  },
-  {
-    title: "Colorful EVOL P15 RTX",
-    tag: "Gaming Workstation",
-    image:
-      "https://mugcnbapivtaplnjzuvq.supabase.co/storage/v1/object/public/products/colorful-evol-p15-hk55f-white.png",
-  },
-];
-
 const SHOWCASE_STAGES = [
   {
     title: "Workstation Meja Studio",
     subtitle:
-      "Sasis aluminium presisi dengan pendinginan senyap untuk kompilasi, desain, dan render harian.",
+      "Sasis CNC aluminium unibody dengan pendinginan senyap untuk kompilasi dan render harian.",
     badge: "01 · STUDIO",
-    image:
-      "https://mugcnbapivtaplnjzuvq.supabase.co/storage/v1/object/public/products/lenovo-yoga-slim-7-83qm002gid-luna-grey.jpg",
+    image: "/images/showcase-studio.jpg",
   },
   {
     title: "Layar Akurasi Kreator",
     subtitle:
-      "Panel OLED terkalibrasi pabrik 100% DCI-P3 untuk warna tajam, desain arsitektur, dan sinema.",
+      "Panel OLED 120Hz terkalibrasi pabrik 100% DCI-P3 untuk desain arsitektur dan sinema.",
     badge: "02 · OLED DISPLAY",
-    image:
-      "https://mugcnbapivtaplnjzuvq.supabase.co/storage/v1/object/public/products/hp-omnibook-3-14-hu0044tu-glacier-silver.jpg",
+    image: "/images/showcase-creator.jpg",
   },
   {
     title: "Mobilitas Sepanjang Hari",
     subtitle:
-      "Bobot ringkas dengan efisiensi daya tinggi untuk produktivitas di kampus, kafe, maupun perjalanan.",
+      "Bobot ringkas dengan efisiensi daya tinggi untuk produktivitas tanpa membawa adaptor.",
     badge: "03 · MOBILITAS",
-    image:
-      "https://mugcnbapivtaplnjzuvq.supabase.co/storage/v1/object/public/products/apple-macbook-neo-mhfa4id-a-silver.jpg",
+    image: "/images/showcase-mobility.jpg",
   },
   {
-    title: "Performa RTX & Konektivitas",
+    title: "Konektivitas Thunderbolt 4",
     subtitle:
-      "Kartu grafis diskrit bertenaga, port Thunderbolt berkecepatan tinggi, dan garansi resmi Indonesia.",
-    badge: "04 · PERFORMA",
-    image:
-      "https://mugcnbapivtaplnjzuvq.supabase.co/storage/v1/object/public/products/colorful-evol-p15-hk55f-white.png",
+      "Transfer data 40 Gbps, output dua layar 6K, dan pengisian cepat USB-C PD 140W.",
+    badge: "04 · KONEKTIVITAS",
+    image: "/images/bento-ports.jpg",
   },
 ];
 
@@ -136,28 +90,14 @@ export default function Home() {
 
   // Hero stage state
   const [activeFinish, setActiveFinish] = useState(0);
-  const [activeHeroSlide, setActiveHeroSlide] = useState(0);
   const [tilt, setTilt] = useState({ rx: 0, ry: 0 });
 
   // Showcase & Thermal Comparison state
   const [activeStage, setActiveStage] = useState(0);
   const [isStageTransitioning, setIsStageTransitioning] = useState(false);
-  const [splitPct, setSplitPct] = useState(52);
+  const [splitPct, setSplitPct] = useState(50);
   const comparisonRef = useRef<HTMLDivElement | null>(null);
   const isDraggingRef = useRef(false);
-
-  // Cart / Bag Drawer state
-  const [cart, setCart] = useState<CartItem[]>([]);
-  const [isBagOpen, setIsBagOpen] = useState(false);
-  const [customerName, setCustomerName] = useState("");
-  const [customerPhone, setCustomerPhone] = useState("");
-  const [customerAddress, setCustomerAddress] = useState("");
-  const [confirmedOrder, setConfirmedOrder] = useState<{
-    id: string;
-    name: string;
-    total: number;
-    count: number;
-  } | null>(null);
 
   // Filters state
   const [searchQuery, setSearchQuery] = useState("");
@@ -216,14 +156,6 @@ export default function Home() {
       }
     }
     getProducts();
-  }, []);
-
-  // Auto rotate hero laptop gallery gently
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setActiveHeroSlide((prev) => (prev + 1) % HERO_GALLERY.length);
-    }, 6500);
-    return () => clearInterval(timer);
   }, []);
 
   // Filter & Sort Logic
@@ -314,65 +246,6 @@ export default function Home() {
     const specs = typeof product.specs === "string" ? product.specs : String(product.specs || "-");
     const message = `Halo LaptopSquare Istana BEC,\n\nSaya tertarik dengan unit:\n*${name}*\nHarga: *${price}*\n\nSpesifikasi:\n${specs}\n\nApakah unit ready di toko BEC Lantai 1 Blok H16?`;
     return `https://wa.me/${WA_PHONE}?text=${encodeURIComponent(message)}`;
-  };
-
-  // Cart helpers
-  const totalBagCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const totalBagPrice = cart.reduce(
-    (sum, item) => sum + (Number(item.product.price) || 0) * item.quantity,
-    0
-  );
-
-  const addToCart = (product: Product) => {
-    setConfirmedOrder(null);
-    setCart((prev) => {
-      const existing = prev.find((i) => i.product.id === product.id);
-      if (existing) {
-        return prev.map((i) =>
-          i.product.id === product.id ? { ...i, quantity: i.quantity + 1 } : i
-        );
-      }
-      return [...prev, { product, quantity: 1 }];
-    });
-    setIsBagOpen(true);
-  };
-
-  const updateCartQty = (productId: string, delta: number) => {
-    setCart((prev) =>
-      prev
-        .map((i) => (i.product.id === productId ? { ...i, quantity: i.quantity + delta } : i))
-        .filter((i) => i.quantity > 0)
-    );
-  };
-
-  const handleConfirmOrder = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (cart.length === 0) return;
-
-    const orderNum = `#LS-${Math.floor(1000 + Math.random() * 9000)}`;
-    const itemsSummary = cart
-      .map(
-        (i) =>
-          `- ${i.product.name} (${i.quantity}x) : Rp ${(
-            (Number(i.product.price) || 0) * i.quantity
-          ).toLocaleString("id-ID")}`
-      )
-      .join("\n");
-
-    const waMsg = `Halo LaptopSquare BEC! Saya ingin konfirmasi pesanan *${orderNum}*:\n\n${itemsSummary}\n\nTotal: *Rp ${totalBagPrice.toLocaleString(
-      "id-ID"
-    )}*\n\nData Pemesan:\nNama: ${customerName || "-"}\nWhatsApp: ${
-      customerPhone || "-"
-    }\nAlamat / Pengambilan: ${customerAddress || "Ambil di Istana BEC Lt. 1 Blok H16"}`;
-
-    setConfirmedOrder({
-      id: orderNum,
-      name: customerName || "Pelanggan",
-      total: totalBagPrice,
-      count: totalBagCount,
-    });
-
-    window.open(`https://wa.me/${WA_PHONE}?text=${encodeURIComponent(waMsg)}`, "_blank");
   };
 
   // Hero 3D tilt handler
@@ -523,7 +396,7 @@ export default function Home() {
             </button>
           </nav>
 
-          {/* Zone 3: Action CTA */}
+          {/* Zone 3: Theme Toggle + Direct WhatsApp CS */}
           <div className="flex items-center gap-2.5">
             <button
               onClick={() => setIsDark(!isDark)}
@@ -539,28 +412,26 @@ export default function Home() {
               {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
 
-            <button
-              onClick={() => setIsBagOpen(true)}
-              className="px-3.5 py-2 rounded-lg text-xs sm:text-sm font-medium flex items-center gap-2 transition-all cursor-pointer hover:border-[var(--border-strong)]"
+            <a
+              href={`https://wa.me/${WA_PHONE}?text=${encodeURIComponent(
+                "Halo LaptopSquare Istana BEC, saya ingin konsultasi & tanya stok laptop."
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3.5 py-2 rounded-lg text-xs sm:text-sm font-medium flex items-center gap-2 transition-all hover:opacity-90"
               style={{
-                backgroundColor: "var(--surface)",
-                border: "1px solid var(--border)",
-                color: "var(--text-primary)",
+                backgroundColor: "var(--accent)",
+                color: "var(--accent-text)",
               }}
             >
-              <span>Tas Belanja</span>
-              <span
-                className="font-mono-tabular font-bold"
-                style={{ color: "var(--accent)" }}
-              >
-                ({totalBagCount})
-              </span>
-            </button>
+              <MessageCircle className="w-4 h-4" />
+              <span>WhatsApp CS</span>
+            </a>
           </div>
         </div>
       </header>
 
-      {/* 2. HERO SECTION WITH WEBGL2 TOPOGRAPHIC SHADER & 3D TILT STAGE */}
+      {/* 2. HERO SECTION WITH WEBGL2 TOPOGRAPHIC SHADER & 3D TILT STUDIO PHOTO */}
       <section
         id="hero"
         className="relative pt-28 pb-16 sm:pt-36 sm:pb-24 overflow-hidden border-b"
@@ -635,12 +506,12 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Hero Right 3D Tilt Stage & Finish Swatches */}
+            {/* Hero Right 3D Tilt Stage with Studio Photography */}
             <div className="lg:col-span-6 flex flex-col gap-4">
               <div
                 onPointerMove={handleHeroTilt}
                 onPointerLeave={() => setTilt({ rx: 0, ry: 0 })}
-                className="relative aspect-[4/3] w-full flex items-center justify-center rounded-xl overflow-hidden transition-shadow"
+                className="relative aspect-[4/3] w-full rounded-xl overflow-hidden transition-shadow"
                 style={{
                   perspective: "1200px",
                   backgroundColor: "var(--surface)",
@@ -648,77 +519,20 @@ export default function Home() {
                   boxShadow: "var(--shadow-tinted)",
                 }}
               >
-                {/* 3D Tilted Image */}
                 <div
-                  className="w-full h-full flex items-center justify-center p-6 sm:p-10 transition-transform duration-200 ease-out"
+                  className="w-full h-full transition-transform duration-200 ease-out"
                   style={{
-                    transform: `rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg)`,
+                    transform: `rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg) scale(1.03)`,
                   }}
                 >
                   <img
-                    src={HERO_GALLERY[activeHeroSlide].image}
-                    alt={HERO_GALLERY[activeHeroSlide].title}
-                    className="max-h-full max-w-full object-contain transition-all duration-500 drop-shadow-2xl"
+                    src="/images/hero-laptop.jpg"
+                    alt="LaptopSquare Flagship Studio"
+                    className="w-full h-full object-cover transition-all duration-500"
                     style={{
                       filter: FINISH_SWATCHES[activeFinish].filter,
                     }}
                   />
-                </div>
-
-                {/* Dynamic Floor Shadow */}
-                <div
-                  className="absolute bottom-5 w-3/5 h-5 rounded-full blur-xl pointer-events-none transition-transform duration-200"
-                  style={{
-                    background:
-                      "radial-gradient(ellipse at center, rgba(0,0,0,0.38) 0%, transparent 72%)",
-                    transform: `translateX(${-tilt.ry * 1.4}px) scale(${
-                      1 - Math.abs(tilt.rx) * 0.01
-                    })`,
-                  }}
-                />
-
-                {/* Top-left series tag */}
-                <div
-                  className="absolute top-4 left-4 px-2.5 py-1 rounded-md text-[11px] font-mono-tabular font-medium"
-                  style={{
-                    backgroundColor: "var(--glass-bg)",
-                    backdropFilter: "blur(12px)",
-                    border: "1px solid var(--border)",
-                  }}
-                >
-                  {HERO_GALLERY[activeHeroSlide].tag} — {HERO_GALLERY[activeHeroSlide].title}
-                </div>
-
-                {/* Slide arrows */}
-                <div className="absolute bottom-4 right-4 flex items-center gap-1.5">
-                  <button
-                    onClick={() =>
-                      setActiveHeroSlide(
-                        (prev) => (prev - 1 + HERO_GALLERY.length) % HERO_GALLERY.length
-                      )
-                    }
-                    className="p-1.5 rounded-lg transition-colors cursor-pointer"
-                    style={{
-                      backgroundColor: "var(--glass-bg)",
-                      border: "1px solid var(--border)",
-                    }}
-                    aria-label="Laptop sebelumnya"
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() =>
-                      setActiveHeroSlide((prev) => (prev + 1) % HERO_GALLERY.length)
-                    }
-                    className="p-1.5 rounded-lg transition-colors cursor-pointer"
-                    style={{
-                      backgroundColor: "var(--glass-bg)",
-                      border: "1px solid var(--border)",
-                    }}
-                    aria-label="Laptop berikutnya"
-                  >
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
                 </div>
               </div>
 
@@ -778,7 +592,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 3. MULTI-ANGLE SHOWCASE SECTION (#showcase) */}
+      {/* 3. MULTI-ANGLE FULL-BLEED CINEMATIC SHOWCASE (#showcase) */}
       <section
         id="showcase"
         className="py-16 sm:py-24 border-b"
@@ -806,73 +620,62 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Cinematic Viewport Card */}
+          {/* Full-Bleed Cinematic Viewport */}
           <div
-            className="relative rounded-xl overflow-hidden min-h-[420px] sm:min-h-[500px] flex flex-col justify-between p-6 sm:p-10"
+            className="relative rounded-xl overflow-hidden min-h-[460px] sm:min-h-[560px] flex flex-col justify-end"
             style={{
-              backgroundColor: "var(--surface)",
+              backgroundColor: "#0b0d11",
               border: "1px solid var(--border)",
               boxShadow: "var(--shadow-tinted)",
             }}
           >
-            <div className="flex items-center justify-between relative z-10">
-              <span
-                className="font-mono-tabular text-xs font-medium px-2.5 py-1 rounded-md"
-                style={{
-                  backgroundColor: "var(--bg)",
-                  border: "1px solid var(--border)",
-                }}
-              >
+            {/* Full-Bleed Background Photography */}
+            <img
+              src={SHOWCASE_STAGES[activeStage].image}
+              alt={SHOWCASE_STAGES[activeStage].title}
+              className={`absolute inset-0 w-full h-full object-cover transition-all duration-500 ${
+                isStageTransitioning ? "opacity-40 blur-sm scale-[1.02]" : "opacity-100 blur-0 scale-100"
+              }`}
+            />
+
+            {/* Editorial Bottom Scrim */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background:
+                  "linear-gradient(to top, rgba(11,13,17,0.88) 0%, rgba(11,13,17,0.35) 45%, rgba(11,13,17,0.08) 100%)",
+              }}
+            />
+
+            {/* Top-Left Badge */}
+            <div className="absolute top-6 left-6 z-10">
+              <span className="font-mono-tabular text-[11px] font-medium px-2.5 py-1 rounded-md bg-black/55 text-white border border-white/15 backdrop-blur-md">
                 {SHOWCASE_STAGES[activeStage].badge}
               </span>
-
-              <button
-                onClick={() => scrollToSection("katalog")}
-                className="text-xs font-medium flex items-center gap-1 hover:underline cursor-pointer"
-                style={{ color: "var(--accent)" }}
-              >
-                <span>Lihat Unit Ready di BEC</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
             </div>
 
-            {/* Center Visual */}
-            <div
-              className={`my-auto py-8 flex items-center justify-center transition-all duration-300 ${
-                isStageTransitioning ? "opacity-30 blur-sm scale-[0.98]" : "opacity-100 blur-0 scale-100"
-              }`}
-            >
-              <img
-                src={SHOWCASE_STAGES[activeStage].image}
-                alt={SHOWCASE_STAGES[activeStage].title}
-                className="max-h-64 sm:max-h-80 object-contain drop-shadow-2xl"
-              />
-            </div>
-
-            {/* Bottom HUD Overlay: Caption + Dock */}
-            <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6 pt-4 border-t" style={{ borderColor: "var(--border)" }}>
+            {/* Bottom HUD Overlay: Caption + Glass Dock */}
+            <div className="relative z-10 p-6 sm:p-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
               <div
-                className={`max-w-lg transition-all duration-300 ${
+                className={`max-w-lg text-white transition-all duration-300 ${
                   isStageTransitioning ? "opacity-40 blur-[2px]" : "opacity-100"
                 }`}
               >
-                <h3 className="text-2xl sm:text-3xl font-bold tracking-[-0.025em]">
+                <h3 className="text-3xl sm:text-4xl font-bold tracking-[-0.025em] leading-tight">
                   {SHOWCASE_STAGES[activeStage].title}
                 </h3>
-                <p
-                  className="text-sm mt-1.5 leading-relaxed"
-                  style={{ color: "var(--text-secondary)" }}
-                >
+                <p className="text-sm text-slate-200 mt-2 leading-relaxed">
                   {SHOWCASE_STAGES[activeStage].subtitle}
                 </p>
               </div>
 
               {/* Glass Dock Stage Switcher */}
               <div
-                className="inline-flex items-center gap-2 p-2 rounded-xl self-start md:self-auto"
+                className="inline-flex items-center gap-2 p-2.5 rounded-xl self-start md:self-auto"
                 style={{
-                  backgroundColor: "rgba(11, 13, 17, 0.78)",
+                  backgroundColor: "rgba(11, 13, 17, 0.72)",
                   backdropFilter: "blur(12px)",
+                  border: "1px solid rgba(255,255,255,0.12)",
                 }}
               >
                 {SHOWCASE_STAGES.map((stage, idx) => {
@@ -882,10 +685,10 @@ export default function Home() {
                       key={stage.badge}
                       onClick={() => handleStageSelect(idx)}
                       aria-label={stage.title}
-                      className="h-2 rounded-full transition-all duration-300 cursor-pointer"
+                      className="h-1.5 rounded-full transition-all duration-300 cursor-pointer"
                       style={{
                         width: isActive ? "44px" : "24px",
-                        backgroundColor: isActive ? "#3b82f6" : "rgba(241, 243, 246, 0.35)",
+                        backgroundColor: isActive ? "#ffffff" : "rgba(241, 243, 246, 0.35)",
                       }}
                     />
                   );
@@ -904,7 +707,7 @@ export default function Home() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
-            {/* Left Interactive Comparison Slider */}
+            {/* Left Full-Bleed Interactive Comparison Slider */}
             <div className="lg:col-span-6">
               <div
                 ref={comparisonRef}
@@ -933,30 +736,30 @@ export default function Home() {
                 aria-label="Perbandingan Mode Senyap dan Mode Studio"
               >
                 {/* Base Layer (Mode Studio · 140W) */}
-                <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-blue-950 flex items-center justify-center p-8">
+                <div className="absolute inset-0">
                   <img
-                    src={HERO_GALLERY[3].image}
+                    src="/images/showcase-studio.jpg"
                     alt="Mode Studio 140W"
-                    className="max-h-full max-w-full object-contain drop-shadow-2xl"
+                    className="w-full h-full object-cover"
                   />
-                  <span className="absolute bottom-4 right-4 px-3 py-1.5 rounded-md text-xs font-mono-tabular font-medium bg-slate-950/85 text-white border border-white/15">
+                  <span className="absolute bottom-4 right-4 px-3 py-1.5 rounded-md text-xs font-mono-tabular font-medium bg-slate-950/85 text-white border border-white/15 backdrop-blur-sm">
                     Mode Studio · 140W
                   </span>
                 </div>
 
                 {/* Top Clipped Layer (Mode Senyap · 24 dB) */}
                 <div
-                  className="absolute inset-0 bg-gradient-to-br from-slate-100 via-slate-200 to-blue-50 flex items-center justify-center p-8"
+                  className="absolute inset-0"
                   style={{
                     clipPath: `inset(0 ${100 - splitPct}% 0 0)`,
                   }}
                 >
                   <img
-                    src={HERO_GALLERY[0].image}
+                    src="/images/showcase-mobility.jpg"
                     alt="Mode Senyap 24 dB"
-                    className="max-h-full max-w-full object-contain drop-shadow-xl"
+                    className="w-full h-full object-cover"
                   />
-                  <span className="absolute bottom-4 left-4 px-3 py-1.5 rounded-md text-xs font-mono-tabular font-medium bg-slate-900/85 text-white">
+                  <span className="absolute bottom-4 left-4 px-3 py-1.5 rounded-md text-xs font-mono-tabular font-medium bg-slate-950/85 text-white border border-white/15 backdrop-blur-sm">
                     Mode Senyap · 24 dB
                   </span>
                 </div>
@@ -1072,30 +875,29 @@ export default function Home() {
           </h2>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-            {/* Tile 1: Tall 7 cols x 2 rows */}
+            {/* Tile 1: Tall 7 cols x 2 rows — Full-Bleed Thunderbolt Ports Macro */}
             <div
               className="lg:col-span-7 lg:row-span-2 relative rounded-xl overflow-hidden min-h-[380px] lg:min-h-[480px] flex flex-col justify-end p-6 sm:p-8"
               style={{
-                backgroundColor: "var(--surface)",
+                backgroundColor: "#0b0d11",
                 border: "1px solid var(--border)",
               }}
             >
               <img
-                src={HERO_GALLERY[2].image}
-                alt="Port Lengkap & Garansi Resmi"
-                className="absolute inset-0 w-full h-full object-contain p-10 opacity-95"
+                src="/images/bento-ports.jpg"
+                alt="Port Lengkap Tanpa Dongle"
+                className="absolute inset-0 w-full h-full object-cover"
               />
               <div
                 className="absolute inset-0 pointer-events-none"
                 style={{
-                  background: isDark
-                    ? "linear-gradient(to top, rgba(11,13,17,0.92) 0%, rgba(11,13,17,0.2) 55%, transparent 100%)"
-                    : "linear-gradient(to top, rgba(17,19,24,0.86) 0%, rgba(17,19,24,0.12) 55%, transparent 100%)",
+                  background:
+                    "linear-gradient(to top, rgba(11,13,17,0.92) 0%, rgba(11,13,17,0.2) 55%, transparent 100%)",
                 }}
               />
               <div className="relative z-10 text-white">
                 <h3 className="text-xl sm:text-2xl font-bold tracking-tight">
-                  Port Lengkap &amp; Garansi Resmi Indonesia
+                  Port Lengkap Tanpa Dongle
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-200 mt-1.5 max-w-lg">
                   Dual Thunderbolt 4, HDMI 2.1, unit tersegel resmi, serta layanan
@@ -1104,33 +906,33 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Tile 2: Top Right 5 cols */}
+            {/* Tile 2: Top Right 5 cols — Full-Bleed Creator Desk */}
             <div
-              className="lg:col-span-5 relative rounded-xl overflow-hidden min-h-[220px] flex flex-col justify-end p-6"
+              className="lg:col-span-5 relative rounded-xl overflow-hidden min-h-[230px] flex flex-col justify-end p-6"
               style={{
-                backgroundColor: "var(--surface)",
+                backgroundColor: "#0b0d11",
                 border: "1px solid var(--border)",
               }}
             >
               <img
-                src={HERO_GALLERY[1].image}
-                alt="Keyboard & Layar OLED"
-                className="absolute inset-0 w-full h-full object-contain p-6 opacity-95"
+                src="/images/showcase-creator.jpg"
+                alt="Keyboard & Trackpad Kaca"
+                className="absolute inset-0 w-full h-full object-cover"
               />
               <div
                 className="absolute inset-0 pointer-events-none"
                 style={{
                   background:
-                    "linear-gradient(to top, rgba(11,13,17,0.88) 0%, rgba(11,13,17,0.15) 60%, transparent 100%)",
+                    "linear-gradient(to top, rgba(11,13,17,0.9) 0%, rgba(11,13,17,0.2) 60%, transparent 100%)",
                 }}
               />
               <div className="relative z-10 text-white">
                 <h3 className="text-lg font-bold tracking-tight">
-                  Keyboard Presisi &amp; Layar OLED
+                  Keyboard &amp; Trackpad Kaca
                 </h3>
                 <p className="text-xs text-slate-200 mt-1">
-                  Panel warna akurat 100% DCI-P3, gratis instalasi Windows &amp; Office
-                  siap pakai.
+                  Jarak tekan 1,3 mm yang presisi, layar OLED akurat, serta gratis
+                  instalasi Windows &amp; Office siap pakai.
                 </p>
               </div>
             </div>
@@ -1170,7 +972,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 6. LIVE SUPABASE CATALOG SECTION (#katalog) */}
+      {/* 6. LIVE SUPABASE CATALOG SECTION (#katalog) — DIRECT WHATSAPP */}
       <main
         id="katalog"
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full flex-1"
@@ -1545,19 +1347,20 @@ export default function Home() {
                         >
                           Detail Spek
                         </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            addToCart(product);
-                          }}
-                          className="py-2 rounded-lg text-xs font-medium transition-colors cursor-pointer"
+                        <a
+                          href={getWhatsAppLink(product)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="py-2 rounded-lg text-xs font-medium transition-colors flex items-center justify-center gap-1.5"
                           style={{
                             backgroundColor: "var(--accent)",
                             color: "var(--accent-text)",
                           }}
                         >
-                          + Tas
-                        </button>
+                          <MessageCircle className="w-3.5 h-3.5" />
+                          <span>Beli via WA</span>
+                        </a>
                       </div>
                     </div>
                   </div>
@@ -1815,7 +1618,7 @@ export default function Home() {
         </div>
       </footer>
 
-      {/* 9. PRODUCT DETAIL MODAL */}
+      {/* 9. PRODUCT DETAIL MODAL (WHATSAPP CHECKOUT ONLY) */}
       {selectedProduct && (
         <div
           onClick={() => {
@@ -1943,278 +1746,20 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <button
-                onClick={() => {
-                  addToCart(selectedProduct);
-                  setSelectedProduct(null);
-                }}
-                className="py-3 rounded-lg text-sm font-medium cursor-pointer"
-                style={{
-                  backgroundColor: "var(--accent)",
-                  color: "var(--accent-text)",
-                }}
-              >
-                Tambah ke Tas Belanja
-              </button>
-              <a
-                href={getWhatsAppLink(selectedProduct)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="py-3 rounded-lg text-sm font-medium text-center flex items-center justify-center gap-2"
-                style={{
-                  backgroundColor: "var(--surface)",
-                  border: "1px solid var(--border-strong)",
-                  color: "var(--text-primary)",
-                }}
-              >
-                <MessageCircle className="w-4 h-4" />
-                <span>Tanya Stok via WA</span>
-              </a>
-            </div>
+            <a
+              href={getWhatsAppLink(selectedProduct)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full py-3.5 rounded-lg text-sm font-medium text-center flex items-center justify-center gap-2 transition-opacity hover:opacity-95"
+              style={{
+                backgroundColor: "var(--accent)",
+                color: "var(--accent-text)",
+              }}
+            >
+              <MessageCircle className="w-4 h-4" />
+              <span>Tanya Stok &amp; Beli via WhatsApp</span>
+            </a>
           </div>
-        </div>
-      )}
-
-      {/* 10. SLIDE-OVER BAG DRAWER (#bag-drawer) */}
-      {isBagOpen && (
-        <div
-          onClick={() => setIsBagOpen(false)}
-          className="fixed inset-0 z-50 bg-black/50 backdrop-blur-[4px] flex justify-end"
-        >
-          <aside
-            id="bag-drawer"
-            onClick={(e) => e.stopPropagation()}
-            className="drawer-panel h-full flex flex-col justify-between p-6 overflow-y-auto"
-            style={{
-              width: "min(440px, 100vw)",
-              backgroundColor: "var(--bg)",
-              borderLeft: "1px solid var(--border)",
-              boxShadow: "var(--shadow-tinted)",
-            }}
-          >
-            <div>
-              <div className="flex items-center justify-between pb-4 border-b" style={{ borderColor: "var(--border)" }}>
-                <div className="flex items-center gap-2">
-                  <ShoppingBag className="w-4 h-4" />
-                  <h3 className="text-base font-bold">
-                    Tas Belanja{" "}
-                    <span className="font-mono-tabular" style={{ color: "var(--accent)" }}>
-                      ({totalBagCount})
-                    </span>
-                  </h3>
-                </div>
-                <button
-                  onClick={() => setIsBagOpen(false)}
-                  className="p-1.5 rounded-lg cursor-pointer"
-                  style={{ backgroundColor: "var(--surface)" }}
-                  aria-label="Tutup tas"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
-              {confirmedOrder ? (
-                <div className="py-10 flex flex-col gap-4">
-                  <span
-                    className="font-mono-tabular text-xs font-medium px-2.5 py-1 rounded-md w-fit"
-                    style={{
-                      backgroundColor: "var(--surface)",
-                      border: "1px solid var(--border)",
-                      color: "var(--accent)",
-                    }}
-                  >
-                    Pesanan {confirmedOrder.id} Dikonfirmasi
-                  </span>
-                  <h4 className="text-2xl font-bold">
-                    Terima kasih, {confirmedOrder.name}.
-                  </h4>
-                  <p className="text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
-                    {confirmedOrder.count} unit laptop dengan total{" "}
-                    <span className="font-mono-tabular font-bold" style={{ color: "var(--text-primary)" }}>
-                      Rp {confirmedOrder.total.toLocaleString("id-ID")}
-                    </span>{" "}
-                    telah diteruskan ke WhatsApp CS LaptopSquare Istana BEC Bandung.
-                  </p>
-                  <button
-                    onClick={() => {
-                      setCart([]);
-                      setConfirmedOrder(null);
-                      setIsBagOpen(false);
-                    }}
-                    className="mt-2 py-3 rounded-lg text-sm font-medium cursor-pointer"
-                    style={{
-                      backgroundColor: "var(--accent)",
-                      color: "var(--accent-text)",
-                    }}
-                  >
-                    Selesai
-                  </button>
-                </div>
-              ) : cart.length === 0 ? (
-                <div className="py-16 text-center flex flex-col items-center gap-4">
-                  <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-                    Tas belanja Anda masih kosong.
-                  </p>
-                  <button
-                    onClick={() => {
-                      setIsBagOpen(false);
-                      scrollToSection("katalog");
-                    }}
-                    className="px-4 py-2.5 rounded-lg text-xs font-medium cursor-pointer"
-                    style={{
-                      backgroundColor: "var(--accent)",
-                      color: "var(--accent-text)",
-                    }}
-                  >
-                    Pilih Laptop
-                  </button>
-                </div>
-              ) : (
-                <form id="bag-order-form" onSubmit={handleConfirmOrder} className="flex flex-col gap-5 mt-5">
-                  <div className="flex flex-col gap-3">
-                    {cart.map((item) => {
-                      const img = getProductImage(item.product);
-                      return (
-                        <div
-                          key={item.product.id}
-                          className="p-3 rounded-xl flex items-center gap-3"
-                          style={{
-                            backgroundColor: "var(--surface)",
-                            border: "1px solid var(--border)",
-                          }}
-                        >
-                          <div
-                            className="w-16 h-14 rounded-lg flex items-center justify-center p-1.5 shrink-0"
-                            style={{ backgroundColor: "var(--bg)" }}
-                          >
-                            {img ? (
-                              <img
-                                src={img}
-                                alt={item.product.name}
-                                className="max-h-full max-w-full object-contain"
-                              />
-                            ) : (
-                              <Laptop className="w-6 h-6 opacity-60" />
-                            )}
-                          </div>
-
-                          <div className="flex-1 min-w-0">
-                            <div className="text-xs font-bold truncate">
-                              {item.product.name}
-                            </div>
-                            <div className="font-mono-tabular text-xs mt-0.5" style={{ color: "var(--accent)" }}>
-                              Rp {Number(item.product.price).toLocaleString("id-ID")}
-                            </div>
-                          </div>
-
-                          <div className="flex items-center gap-1.5">
-                            <button
-                              type="button"
-                              onClick={() => updateCartQty(item.product.id, -1)}
-                              className="w-6 h-6 rounded flex items-center justify-center cursor-pointer"
-                              style={{ backgroundColor: "var(--bg)", border: "1px solid var(--border)" }}
-                            >
-                              <Minus className="w-3 h-3" />
-                            </button>
-                            <span className="font-mono-tabular text-xs w-5 text-center">
-                              {item.quantity}
-                            </span>
-                            <button
-                              type="button"
-                              onClick={() => updateCartQty(item.product.id, 1)}
-                              className="w-6 h-6 rounded flex items-center justify-center cursor-pointer"
-                              style={{ backgroundColor: "var(--bg)", border: "1px solid var(--border)" }}
-                            >
-                              <Plus className="w-3 h-3" />
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {/* Customer Details */}
-                  <div className="flex flex-col gap-3 pt-4 border-t" style={{ borderColor: "var(--border)" }}>
-                    <div>
-                      <label className="block text-xs font-medium mb-1">Nama Lengkap</label>
-                      <input
-                        type="text"
-                        required
-                        value={customerName}
-                        onChange={(e) => setCustomerName(e.target.value)}
-                        placeholder="Contoh: Bima Pratama"
-                        className="w-full px-3 py-2 rounded-lg text-xs focus:outline-none"
-                        style={{
-                          backgroundColor: "var(--surface)",
-                          border: "1px solid var(--border)",
-                          color: "var(--text-primary)",
-                        }}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium mb-1">Nomor WhatsApp</label>
-                      <input
-                        type="tel"
-                        required
-                        value={customerPhone}
-                        onChange={(e) => setCustomerPhone(e.target.value)}
-                        placeholder="0812-xxxx-xxxx"
-                        className="w-full px-3 py-2 rounded-lg text-xs focus:outline-none"
-                        style={{
-                          backgroundColor: "var(--surface)",
-                          border: "1px solid var(--border)",
-                          color: "var(--text-primary)",
-                        }}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium mb-1">
-                        Alamat Pengiriman / Ambil di Toko
-                      </label>
-                      <textarea
-                        rows={2}
-                        value={customerAddress}
-                        onChange={(e) => setCustomerAddress(e.target.value)}
-                        placeholder="Jalan, Kota, atau tulis: Ambil di Istana BEC Bandung"
-                        className="w-full px-3 py-2 rounded-lg text-xs focus:outline-none"
-                        style={{
-                          backgroundColor: "var(--surface)",
-                          border: "1px solid var(--border)",
-                          color: "var(--text-primary)",
-                        }}
-                      />
-                    </div>
-                  </div>
-                </form>
-              )}
-            </div>
-
-            {cart.length > 0 && !confirmedOrder && (
-              <div className="pt-4 mt-6 border-t" style={{ borderColor: "var(--border)" }}>
-                <div className="text-[11px] mb-2" style={{ color: "var(--text-secondary)" }}>
-                  Gratis ongkir berasuransi penuh atau ambil langsung di Istana BEC Lt. 1 Blok H16
-                </div>
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm font-medium">Total</span>
-                  <span className="font-mono-tabular text-lg font-bold">
-                    Rp {totalBagPrice.toLocaleString("id-ID")}
-                  </span>
-                </div>
-                <button
-                  type="submit"
-                  form="bag-order-form"
-                  className="w-full py-3 rounded-lg text-sm font-medium cursor-pointer"
-                  style={{
-                    backgroundColor: "var(--accent)",
-                    color: "var(--accent-text)",
-                  }}
-                >
-                  Konfirmasi Pesanan via WhatsApp
-                </button>
-              </div>
-            )}
-          </aside>
         </div>
       )}
     </div>
