@@ -1,15 +1,40 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --bg: #f6f7f9;
+  --surface: #eceef2;
+  --surface-elevated: #e2e5eb;
+  --text-primary: #111318;
+  --text-secondary: #4e5563;
+  --border: rgba(17, 19, 24, 0.1);
+  --border-strong: rgba(17, 19, 24, 0.22);
+  --accent: #1d4ed8;
+  --accent-hover: #1e40af;
+  --accent-text: #f8fafc;
+  --glass-bg: rgba(246, 247, 249, 0.84);
+  --shadow-tinted: 0 20px 56px rgba(17, 19, 24, 0.1);
+  --radius-card: 12px;
+  --radius-control: 8px;
+}
+
+[data-theme="dark"] {
+  --bg: #0b0d11;
+  --surface: #13161d;
+  --surface-elevated: #1a1e28;
+  --text-primary: #f1f3f6;
+  --text-secondary: #9aa2b1;
+  --border: rgba(241, 243, 246, 0.11);
+  --border-strong: rgba(241, 243, 246, 0.22);
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --accent-text: #0b0d11;
+  --glass-bg: rgba(11, 13, 17, 0.8);
+  --shadow-tinted: 0 24px 64px rgba(0, 0, 0, 0.56);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-dm-sans), -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: var(--font-dm-mono), ui-monospace, SFMono-Regular, monospace;
 }
 
 html {
@@ -17,80 +42,52 @@ html {
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-dm-sans), -apple-system, BlinkMacSystemFont, sans-serif;
   overflow-x: hidden;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
-/* Animations */
-@keyframes marquee {
-  0% { transform: translateX(0%); }
-  100% { transform: translateX(-50%); }
+.font-mono-tabular {
+  font-family: var(--font-dm-mono), ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
 }
 
-.animate-marquee {
-  display: flex;
-  width: max-content;
-  animation: marquee 32s linear infinite;
+/* Subtle architectural dot grain overlay */
+.bg-grain-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.025;
+  background-image: radial-gradient(rgba(128, 128, 128, 0.65) 1px, transparent 0);
+  background-size: 24px 24px;
 }
 
-.animate-marquee:hover {
-  animation-play-state: paused;
+/* Animated nav link underline */
+.nav-link-line {
+  position: relative;
+}
+.nav-link-line::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 100%;
+  height: 1.5px;
+  background-color: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.nav-link-line:hover::after {
+  transform: scaleX(1);
 }
 
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-10px) rotate(0.8deg);
-  }
-}
-
-@keyframes float-reverse {
-  0%, 100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  50% {
-    transform: translateY(8px) rotate(-0.8deg);
-  }
-}
-
-@keyframes pulse-glow {
-  0%, 100% {
-    opacity: 0.35;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.75;
-    transform: scale(1.08);
-  }
-}
-
-@keyframes badge-float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-5px);
-  }
-}
-
-.animate-float {
-  animation: float 4.5s ease-in-out infinite;
-}
-
-.animate-float-reverse {
-  animation: float-reverse 5.5s ease-in-out infinite;
-}
-
-.animate-pulse-glow {
-  animation: pulse-glow 3.5s ease-in-out infinite;
-}
-
-.animate-badge-float {
-  animation: badge-float 3s ease-in-out infinite;
+/* Slide-over drawer easing */
+.drawer-panel {
+  transition: transform 0.36s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 /* Custom scrollbars */
